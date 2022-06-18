@@ -1,0 +1,32 @@
+{
+  "name": "micro-front",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "micro": "./bin/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@vue/cli": "^5.0.5",
+    "chalk": "^5.0.1",
+    "clear": "^0.1.0",
+    "commander": "^9.3.0",
+    "figlet": "^1.5.2",
+    "fs-extra": "^10.1.0",
+    "handlebars": "^4.7.7",
+    "inquirer": "^8.2.4",
+    "install": "^0.13.0",
+    "json-format": "^1.0.1",
+    "npm": "^8.12.2",
+    "open": "^8.4.0",
+    "ora": "^6.1.0",
+    "simple-git": "^3.7.1",
+    "watch": "^1.0.2"
+  }
+}
