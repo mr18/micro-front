@@ -30,6 +30,7 @@ declare module 'sandbox' {
     keepalive?: boolean = false;
     snapshot?: boolean = false; // 沙箱模式，是否是快照模式
     parent?: T;
+    shareScope?: Array<string>;
   };
   interface SandboxTreeInterface<T> {
     root: T | null;

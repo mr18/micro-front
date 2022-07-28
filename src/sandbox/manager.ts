@@ -58,7 +58,7 @@ export class SandboxTree implements SandboxTreeInterface<SandboxNode> {
     // this.root = new SandboxNode(sandBox);
   }
   derive(name: string, options: provideOptions<SandboxNode>) {
-    const sandBox = new Sandbox(options.parent ? options.parent.node : this.options.snapshot);
+    const sandBox = new Sandbox(options.parent ? options.parent.node : this.options.snapshot, options.shareScope);
     const sandBoxNode = new SandboxNode(name, options.keepalive === false ? false : this.options.keepalive, sandBox, options.parent);
     if (options.parent) {
       options.parent.addChild(sandBoxNode);
