@@ -1,5 +1,4 @@
 import Logger, { LogLevel } from './utils/logger';
-export { defineCustomElement } from './component/index';
-export { SandboxManager } from './sandbox/index';
-export { Sandbox } from './sandbox/sandbox';
+export * from './component/index';
+export * from './sandbox/index';
 Logger.level = LogLevel.log;

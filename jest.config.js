@@ -2,6 +2,7 @@
 // https://jestjs.io/docs/en/configuration.html
 
 module.exports = {
+  verbose: true,
   clearMocks: true,
   coverageDirectory: 'coverage',
   coverageReporters: ['json', 'text', 'lcov', 'clover', 'html'],
@@ -9,6 +10,7 @@ module.exports = {
   transformIgnorePatterns: ['/node_modules/'],
   testPathIgnorePatterns: [],
   coveragePathIgnorePatterns: ['/scripts/'],
+  testEnvironment: 'jest-environment-jsdom',
   transform: {
     '^.+\\.jsx?$': 'babel-jest',
     '^.+\\.tsx?$': 'ts-jest',

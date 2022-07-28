@@ -1,13 +1,16 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "strict": true,
     "declaration": true,
     "declarationDir": "lib/types",
     "emitDeclarationOnly": true,
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
     "disableSizeLimit": true,
-    "rootDirs": ["./src", "./typings"]
+    "strictPropertyInitialization": false,
+    "moduleResolution": "node",
+    "baseUrl": "."
   },
-  "include": ["src", "typings"],
-  "exclude": ["node_modules"]
+  "include": ["src", "types"],
+  "exclude": ["node_modules", "**/__tests__/**"]
 }

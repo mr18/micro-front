@@ -2,8 +2,7 @@
 import { SandboxManager } from '../../sandbox/index';
 import { Sandbox } from '../../sandbox/sandbox';
 import Logger, { LogLevel } from '../../utils/logger';
-
-Logger.level = LogLevel.log;
+ 
 
 /**
  * @jest-environment jsdom

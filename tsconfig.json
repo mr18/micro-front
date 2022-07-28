@@ -6,16 +6,17 @@
     "allowJs": true,
     "checkJs": true,
     "noEmit": true,
-    // "strict": true,
     "declaration": true,
     "downlevelIteration": true,
     "skipLibCheck": true,
     "disableSizeLimit": true,
+    "strictPropertyInitialization": false,
     "outDir": "lib",
-    "rootDirs": ["src", "./typings", "node_modules/@types"],
-    "types": ["jest", "node"]
-    // "baseUrl": "./"
+    // "moduleResolution": "node",
+    "types": ["jest", "node"],
+    "baseUrl": "."
   },
   "compileOnSave": false,
-  "include": ["src", "typings"]
+  "include": ["src", "types"],
+  "exclude": ["node_modules", "**/__tests__"]
 }

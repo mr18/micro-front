@@ -11,6 +11,6 @@ export const objectHasProperty = (target: object, key: PropertyKey) => {
 export const getOwnPropertyNames = (target: object, key: PropertyKey) => {
   return Object.getOwnPropertyNames.call(target, key);
 };
-export const createNewObject = (obj: object) => {
+export const createObjectSnapshot = (obj: object) => {
   return Object.create(Object.getPrototypeOf(obj), Object.getOwnPropertyDescriptors(obj));
 };
