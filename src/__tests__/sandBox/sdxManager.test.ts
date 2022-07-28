@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { SandboxManager } from '../../sandbox/manager';
-import Logger, { LogLevel } from '../../utils/logger';
+import Logger from '../../utils/logger';
 
 describe('sandbox manager', () => {
   // Sandbox 管理，

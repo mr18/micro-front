@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { SandboxManager } from '../../sandbox/index';
 import { Sandbox } from '../../sandbox/sandbox';
-import Logger, { LogLevel } from '../../utils/logger';
- 
 
 /**
  * @jest-environment jsdom

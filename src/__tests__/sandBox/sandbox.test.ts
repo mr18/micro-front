@@ -4,8 +4,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { GlobalProxy } from 'sandbox';
 import { Sandbox } from '../../sandbox/sandbox';
-import Logger, { LogLevel } from '../../utils/logger';
-
 
 describe('sandbox property', () => {
   // Sandbox 取值&赋值测试
