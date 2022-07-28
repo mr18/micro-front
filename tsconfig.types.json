@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "strict": true,
+    "declaration": true,
+    "declarationDir": "lib/types",
+    "emitDeclarationOnly": true,
+    "disableSizeLimit": true,
+    "rootDirs": ["./src", "./typings"]
+  },
+  "include": ["src", "typings"],
+  "exclude": ["node_modules"]
+}

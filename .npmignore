@@ -1,6 +1,0 @@
-.idea
-.vscode
-node_modules
-demo/locale
-demo/dist
-package-lock.json
