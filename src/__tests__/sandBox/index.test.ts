@@ -11,6 +11,7 @@ describe('sandbox property', () => {
 
   test('sanbox can read global property, but cant not set global vars', async () => {
     global.key = 'key';
+    // snapshot 快照模式
     const SDbox = new Sandbox(true, ['share']).currentWindow as any;
     const location = global.location;
     expect(SDbox.location).toBe(location);
@@ -43,20 +44,35 @@ describe('sandbox property', () => {
     expect(SDboxChild.key2).toBe(undefined);
 
     // 顶层global中的变量全局共享
+
     expect(SDboxChild.key11).toBe(global.key11);
     expect(SDboxChild.global).toBe(global.global);
 
+    expect(SDbox.key1).toBe(undefined);
+
     // 全局共享数据，统一设置
     SDboxChild.share = { a: 1 };
-    expect(SDboxChild.share).toBe(global.share);
-    expect(SDbox.share).toBe(global.share);
+    // expect(SDboxChild.share).toBe(SDbox.share);
+    // expect(SDbox.share).toBe(global.share);
 
-    (SDbox.share as any).b = { sa: 1 };
-    expect(SDboxChild.share).toBe(global.share);
-    expect(SDbox.share).toBe(global.share);
+    // (SDbox.share as any).b = { sa: 1 };
+    // expect(SDboxChild.share).toBe(global.share);
+    // expect(SDbox.share).toBe(global.share);
 
-    SDbox.share = 'share';
-    expect(SDboxChild.share).toBe(global.share);
-    expect(SDbox.share).toBe(global.share);
+    // SDbox.share = 'share';
+    // expect(SDboxChild.share).toBe(global.share);
+    // expect(SDbox.share).toBe(global.share);
+
+    // snapshot 非快照模式
+    const SDbox2 = new Sandbox(false, ['share']).currentWindow as any;
+    const SDbox21 = new Sandbox(SDbox2, ['share']).currentWindow as any;
+
+    // 可读取快照之后的变量
+
+    global.key3 = 'key3';
+    expect(SDbox2.key3).toBe(global.key3);
+    expect(SDbox21.key3).toBe(global.key3);
+
+    expect(SDbox2.key).toBe(global.key);
   });
 });

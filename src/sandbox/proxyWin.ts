@@ -18,8 +18,8 @@ export default function proxyWin(snapshot: boolean): GlobalProxyType {
       return !objectHasProperty(windowObj, key) || declaredMap.has(key);
     });
   }
-  if (!objectHasProperty(windowObj, 'currentWindow')) {
-    defineFreezeProperty(windowObj, 'currentWindow', global);
+  if (!objectHasProperty(newObj, 'currentWindow')) {
+    defineFreezeProperty(newObj, 'currentWindow', windowObj);
   }
-  return windowObj;
+  return newObj;
 }
