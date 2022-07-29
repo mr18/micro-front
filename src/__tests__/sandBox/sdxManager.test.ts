@@ -26,6 +26,9 @@ describe('sandbox manager', () => {
     expect(manager.findSandBox('b')).toBe(nodeb);
     expect(manager.findSandBox('c')).toBe(nodec);
 
+    expect(() => manager.provide('2', { keepalive: false, parent: node })).toThrow();
+    expect(() => manager.provide('2')).toThrow();
+
     // // 失效，不保持状态，需要删除
     manager.inactive('2');
 
@@ -36,17 +39,15 @@ describe('sandbox manager', () => {
     expect(manager.findSandBox('3')).toBe(node3);
 
     // keepalive=false 失效后不可再激活
-    manager.active('2');
-    expect(Logger.error).toBeCalled();
+    expect(() => manager.active('2')).toThrow();
 
     // 无法在失效后的 sanbox 中挂载新的 sandbox
-    const nodex = manager.provide('x', { keepalive: true, snapshot: false, parent: node2 });
-    expect(Logger.error).toBeCalled();
+
+    expect(() => manager.provide('x', { keepalive: true, snapshot: false, parent: node2 })).toThrow();
 
     const nodey = manager.provide('y', { keepalive: true, snapshot: false, parent: nodec });
     const nodez = manager.provide('z', { keepalive: true, snapshot: false, parent: nodey });
 
-    expect(nodex).toBe(undefined);
     expect(nodez?.parent).toBe(nodey);
     expect(nodez?.top).toBe(nodea);
   });

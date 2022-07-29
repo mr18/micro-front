@@ -14,3 +14,4 @@ export const getOwnPropertyNames = (target: object, key: PropertyKey) => {
 export const createObjectSnapshot = (obj: object) => {
   return Object.create(Object.getPrototypeOf(obj), Object.getOwnPropertyDescriptors(obj));
 };
+

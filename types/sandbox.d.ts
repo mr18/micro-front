@@ -1,6 +1,10 @@
 declare module 'sandbox' {
-  type GlobalProxyType = Window & { isDecleared: (key: PropertyKey) => boolean; currentWindow: object; parentSandbox?: object };
-  type GlobalProxy = (Window | object) & Record<PropertyKey, unknown>;
+  type GlobalProxyType = Window & {
+    isDecleared: (key: PropertyKey) => boolean;
+    currentWindow: GlobalProxyType;
+    parentSandbox?: GlobalProxyType;
+  };
+  type GlobalProxy = (Window | object) & Record<PropertyKey, any>;
 
   interface SandboxInterface {
     parentSandbox: GlobalProxyType;
@@ -9,32 +13,24 @@ declare module 'sandbox' {
     weakup(): void;
     destory(): void;
   }
-  interface node<T, U> {
+  interface Node<T> {
     node: T;
-    parent: U | null | undefined;
-    children: Set<U>;
+    parent: Node<T> | null | undefined;
+    children: Set<Node<T>>;
     name: string;
     keepalive: boolean;
-    top: U;
-  }
-  interface NodeType<T> {
-    node: T;
-    parent: node<T, NodeType<T>> | null | undefined;
-    children: Set<node<T, NodeType<T>>>;
-    name: string;
-    keepalive: boolean;
-    top: node<T, NodeType<T>>;
+    top: Node<T>;
   }
 
   type provideOptions<T> = {
-    keepalive?: boolean = false;
-    snapshot?: boolean = false; // 沙箱模式，是否是快照模式
+    keepalive?: boolean;
+    snapshot?: boolean; // 沙箱模式，是否是快照模式
     parent?: T;
     shareScope?: Array<string>;
   };
   interface SandboxTreeInterface<T> {
     root: T | null;
-    derive(name: string, options): T;
+    derive(node: T, parent?: T): T;
   }
   interface SandboxManagerInterface {
     provide(name, options): void;

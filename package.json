@@ -4,6 +4,7 @@
   "description": "micro-front",
   "main": "lib/index.min.js",
   "module": "lib/index.esm.js",
+  "browser": "lib/index.umd.js",
   "types": "lib/types/index.d.ts",
   "scripts": {
     "clean": "rimraf lib",
@@ -13,6 +14,7 @@
     "lint": "eslint --ext .ts,.js",
     "lint:fix": "eslint --fix --ext .ts,.js",
     "test": "jest",
+    "test:coverage": "jest --coverage",
     "test:watch": "jest --watch"
   },
   "devDependencies": {

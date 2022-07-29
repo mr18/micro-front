@@ -6,17 +6,17 @@
     "allowJs": true,
     "checkJs": true,
     "noEmit": true,
-    "declaration": true,
+    "declaration": false,
     "downlevelIteration": true,
     "skipLibCheck": true,
     "disableSizeLimit": true,
     "strictPropertyInitialization": false,
     "outDir": "lib",
-    // "moduleResolution": "node",
+    "moduleResolution": "node",
     "types": ["jest", "node"],
     "baseUrl": "."
   },
   "compileOnSave": false,
   "include": ["src", "types"],
-  "exclude": ["node_modules", "**/__tests__"]
+  "exclude": ["node_modules"]
 }
