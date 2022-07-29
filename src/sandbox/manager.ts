@@ -1,12 +1,14 @@
 import { provideOptions, SandboxManagerInterface } from 'sandbox';
+import { Sandbox } from './sandbox';
 import { SandboxNode } from './sandboxNode';
 import { SandboxTree } from './sandboxTree';
 
+type sdxNode = SandboxNode<Sandbox>;
 export class SandboxManager implements SandboxManagerInterface {
   sandBoxContainer = new Set<SandboxTree>();
   currentContainer: SandboxTree;
   nodeTreeList = new WeakMap<SandboxNode, SandboxTree>();
-  nodeNameList = new Map<string, SandboxNode>();
+  nodeNameList = new Map<string, sandboxNode>();
   findSandBox(node: string | SandboxNode) {
     if (typeof node === 'string') {
       return this.nodeNameList.get(node);

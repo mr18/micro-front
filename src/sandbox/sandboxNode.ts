@@ -1,41 +1,42 @@
 import { Node } from 'sandbox';
 import { Sandbox } from './sandbox';
 
-export const equalNode = (node: SandboxNode, sanbox: string | SandboxNode) => {
+export const equalNode = (node, sanbox) => {
   if (typeof sanbox === 'string') {
     return node.name === sanbox;
   }
   return node === sanbox;
 };
-export class SandboxNode<T extends Sandbox> implements Node<T> {
+
+export class SandboxNode<T, U extends Node<T>> implements Node<T> {
   node: T;
-  parent: SandboxNode<T> | null | undefined;
-  children: Set<SandboxNode<T>>;
+  parent: U | null | undefined;
+  children: Set<U>;
   name: string;
-  top: SandboxNode<T>;
+  top: U;
   keepalive: boolean;
-  constructor(name: string, keepalive = false, node: T, parent?: SandboxNode<T>) {
+  constructor(name: string, keepalive = false, node: T, parent?: U) {
     this.node = node;
     this.name = name;
     this.parent = parent;
     this.keepalive = keepalive;
-    this.children = new Set<SandboxNode<T>>();
+    this.children = new Set<U>();
   }
 
-  addChild(node: SandboxNode<T>) {
+  addChild(node: U) {
     this.children.add(node);
   }
-  findChild(name: string | SandboxNode<T>) {
+  findChild(name: string | U) {
     if (equalNode(this, name)) {
       return this;
     } else {
-      const queue: SandboxNode<T>[] = [this];
-      let cur: SandboxNode<T> | undefined;
+      const queue: Array<this | U> = [this];
+      let cur: U | this;
       while (queue.length > 0) {
         cur = queue.pop();
         if (!cur) return cur;
         if (equalNode(cur, name)) return cur;
-        cur.children.forEach((node: SandboxNode<T>) => queue.push(node));
+        cur.children.forEach((node: this | U) => queue.push(node));
       }
     }
   }

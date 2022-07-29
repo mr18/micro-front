@@ -1,4 +1,5 @@
 import { SandboxTreeInterface } from 'sandbox';
+import { Sandbox } from './sandbox';
 import { equalNode, SandboxNode } from './sandboxNode';
 
 // const windowGetterMap = new Map<PropertyKey, unknown>();
@@ -7,7 +8,7 @@ import { equalNode, SandboxNode } from './sandboxNode';
  */
 
 let treeUuid = 0;
-export class SandboxTree<T extends SandboxNode> implements SandboxTreeInterface<T> {
+export class SandboxTree<T extends SandboxNode<Sandbox>> implements SandboxTreeInterface<T> {
   root: T | null;
   treeUuid: number;
   constructor() {
