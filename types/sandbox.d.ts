@@ -10,31 +10,27 @@ declare module 'sandbox' {
     parentSandbox: GlobalProxyType;
     currentWindow: GlobalProxy;
     setup(): void;
+  }
+  interface ScopeInterface extends SandboxInterface {
     weakup(): void;
     destory(): void;
+    sleep(): void;
   }
-  interface Node<T> {
-    node: T;
-    parent: Node<T> | null | undefined;
-    children: Set<Node<T>>;
-    name: string;
-    keepalive: boolean;
-    top: Node<T>;
+  interface SandboxTreeInterface<N> {
+    root: N | null;
+    attach(node: N, parent?: N): N;
+    find(node: N): void;
+    remove(node: N): void;
   }
-
-  type provideOptions<T> = {
-    keepalive?: boolean;
-    snapshot?: boolean; // 沙箱模式，是否是快照模式
-    parent?: T;
-    shareScope?: Array<string>;
-  };
-  interface SandboxTreeInterface<T> {
-    root: T | null;
-    derive(node: T, parent?: T): T;
-  }
-  interface SandboxManagerInterface {
-    provide(name, options): void;
-    active(node: string): void;
-    inactive(node): void;
+  interface SandboxManagerInterface<N, T> {
+    treeContainer: Set<T>;
+    currentTree: T;
+    nodeTreeList: WeakMap<N, T>;
+    nodeNameList: Map<string, N>;
+    findNode(node: string | N): void;
+    findTreeByNode(node: string | N);
+    // provide(name: string, options): N;
+    // active(node: string | N): void;
+    // inactive(node: string | N): void;
   }
 }

@@ -1,20 +1,14 @@
 import { SandboxTreeInterface } from 'sandbox';
-import { Sandbox } from './sandbox';
 import { equalNode, SandboxNode } from './sandboxNode';
 
-// const windowGetterMap = new Map<PropertyKey, unknown>();
-// let uuid = 1;
-/** Sandbox 惰性取值， 使用 window[key] 获取全局变量的值
- */
-
 let treeUuid = 0;
-export class SandboxTree<T extends SandboxNode<Sandbox>> implements SandboxTreeInterface<T> {
-  root: T | null;
+export class SandboxTree<N extends SandboxNode> implements SandboxTreeInterface<N> {
+  root: N | null;
   treeUuid: number;
   constructor() {
     this.treeUuid = ++treeUuid;
   }
-  derive(node: T, parent?: T) {
+  attach(node: N, parent?: N) {
     if (parent) {
       parent.addChild(node);
       !this.root && (this.root = parent);
@@ -27,21 +21,20 @@ export class SandboxTree<T extends SandboxNode<Sandbox>> implements SandboxTreeI
     return node;
   }
 
-  find(node: T) {
+  find(node: N) {
     if (this.root) {
-      const queue: T[] = [this.root];
-      let cur: T | undefined;
+      const queue: N[] = [this.root];
+      let cur: N | undefined;
       while (queue.length > 0) {
         cur = queue.pop();
         if (!cur) return cur;
         if (equalNode(cur, node)) return cur;
-        cur.children.forEach((node: T) => queue.push(node));
+        cur.children.forEach((node: N) => queue.push(node));
       }
     }
     // errror
   }
-
-  remove(node: T) {
+  remove(node: N) {
     if (node === this.root) {
       this.root = null;
     } else {

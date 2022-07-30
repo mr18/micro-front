@@ -34,6 +34,11 @@ export class Sandbox implements SandboxInterface {
         return declaredMap.has(key);
       });
     }
+    if (!objectHasProperty(this.currentWindow, '__getSandBoxInstance__')) {
+      defineFreezeProperty(this.currentWindow, '__getSandBoxInstance__', () => {
+        return this;
+      });
+    }
     this.currentWindow = proxy as GlobalProxy;
   }
   proxy(proxyObj: GlobalProxy, sandbox: Sandbox) {
@@ -106,19 +111,13 @@ export class Sandbox implements SandboxInterface {
     return target.SHARE_DATA_KEYS.includes(key as string);
   }
 
-  // get(key: PropertyKey) {
-  //   return this.currentWindow[key];
-  // }
-  // set(key: PropertyKey, val: unknown) {
-  //   return (this.currentWindow[key] = val);
-  // }
   sleep() {
-    this.active = false;
+    throw new Error('must be overwrite');
   }
   weakup() {
-    this.active = true;
+    throw new Error('must be overwrite');
   }
   destory() {
-    // destoryEffects();
+    throw new Error('must be overwrite');
   }
 }

@@ -1,10 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Scope } from 'src/app/scope';
 import Logger from '../utils/logger';
 
-export const defineSciprtElement = (scope: Scope) => {
+export const defineSciprtElement = (scope) => {
   const win = scope.node.currentWindow;
-  const scriptsMap = new Map();
   class ScriptElement extends HTMLScriptElement {
     src: string;
     constructor() {
@@ -19,8 +17,8 @@ export const defineSciprtElement = (scope: Scope) => {
         },
       });
     }
-    private(src: string) {
-      scriptsMap.set(src, src);
+    private pickSource(src: string) {
+      scope.pickSource(this.src, 'script');
     }
 
     // 当 custom element 首次被插入文档 DOM 时，被调用。
@@ -43,5 +41,4 @@ export const defineSciprtElement = (scope: Scope) => {
   }
 
   win.customElements.define('micro-script', ScriptElement, { extends: 'script' });
-  return scriptsMap;
 };

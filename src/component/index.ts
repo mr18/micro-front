@@ -1,20 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { GlobalProxy } from 'sandbox';
-import { SandboxManager } from 'src/app';
-import { SandboxNode } from 'src/sandbox/sandboxNode';
 import Logger from '../utils/logger';
 
 export class webComponents extends HTMLScriptElement {
   [x: string]: any;
-  sandboxNode: SandboxNode;
-  curWindow: GlobalProxy;
   constructor() {
     super();
     let src: string;
 
-    const manager = new SandboxManager();
-    this.sandboxNode = manager.provide('home', { snapshot: true, keepalive: true });
-    this.curWindow = this.sandboxNode.node.currentWindow;
     Object.defineProperty(this, 'src', {
       // value: '21',
       // writable: true,

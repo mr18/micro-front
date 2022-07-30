@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { SandboxManager } from '../../sandbox/manager';
+import { FrameWork } from '../../app/frame';
 import Logger from '../../utils/logger';
 
 describe('sandbox manager', () => {
@@ -9,7 +9,7 @@ describe('sandbox manager', () => {
     Logger.error = jest.fn();
   });
   test('sandbox can be add & remove from sandboxNode tree', async () => {
-    const manager = new SandboxManager();
+    const manager = new FrameWork();
 
     const node = manager.provide('1', { keepalive: true });
 
@@ -23,8 +23,8 @@ describe('sandbox manager', () => {
     expect(node?.name).toBe('1');
     expect(node2?.name).toBe('2');
 
-    expect(manager.findSandBox('b')).toBe(nodeb);
-    expect(manager.findSandBox('c')).toBe(nodec);
+    expect(manager.findNode('b')).toBe(nodeb);
+    expect(manager.findNode('c')).toBe(nodec);
 
     expect(() => manager.provide('2', { keepalive: false, parent: node })).toThrow();
     expect(() => manager.provide('2')).toThrow();
@@ -32,11 +32,11 @@ describe('sandbox manager', () => {
     // // 失效，不保持状态，需要删除
     manager.inactive('2');
 
-    expect(manager.findSandBox('2')).toBe(undefined);
+    expect(manager.findNode('2')).toBe(undefined);
 
     // // 保持状态，不需要删除
     manager.inactive('3');
-    expect(manager.findSandBox('3')).toBe(node3);
+    expect(manager.findNode('3')).toBe(node3);
 
     // keepalive=false 失效后不可再激活
     expect(() => manager.active('2')).toThrow();
