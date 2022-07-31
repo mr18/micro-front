@@ -14,13 +14,13 @@ export class Sandbox implements SandboxInterface {
   shareVars: Array<string> = []; // 共享键名
   sandboxId: number;
   parentSandbox: GlobalProxyType; // 当前 Sandbox 父集
-  currentWindow: GlobalProxy; // 所有取值复制操作都在currentWindow上进行
+  currentWindow: GlobalProxy = {}; // 所有取值复制操作都在currentWindow上进行
   active: boolean;
   constructor(sandbox?: Sandbox | undefined, shareDataKeys?: Array<string>) {
     this.shareVars = shareDataKeys || [];
     this.sandboxId = ++uuid;
     if (sandbox instanceof Sandbox) {
-      this.parentSandbox = sandbox as unknown as GlobalProxyType;
+      this.parentSandbox = sandbox as any as GlobalProxyType;
     } else {
       this.parentSandbox = proxyWin() as GlobalProxyType;
     }

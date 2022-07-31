@@ -1,6 +1,6 @@
 declare module 'sandbox' {
   type GlobalProxyType = Window & {
-    currentWindow: GlobalProxyType;
+    currentWindow: GlobalProxy;
     parentSandbox?: GlobalProxyType;
   };
   type GlobalProxy = (Window | object) & Record<PropertyKey, any>;
