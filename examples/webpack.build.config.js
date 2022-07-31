@@ -9,10 +9,10 @@ module.exports = {
       import: path.resolve(__dirname, './src/b.js'),
       // runtime: "runtime-111",
     },
-    index: {
-      import: path.resolve(__dirname, './src/index.js'),
-      runtime: 'runtime-111',
-    },
+    // index: {
+    //   import: path.resolve(__dirname, './src/index.js'),
+    //   runtime: 'runtime-111',
+    // },
   },
   devtool: 'source-map',
   output: {
@@ -22,6 +22,7 @@ module.exports = {
     chunkFilename: '[name].[hash:6].chunk.js',
     libraryTarget: 'umd',
     // pathinfo: true,
+    chunkLoadingGlobal: 'http9990',
   },
   recordsPath: path.join(__dirname, './records.json'),
   resolve: {
@@ -109,10 +110,10 @@ module.exports = {
       filename: './bbb.html',
       chunks: ['bbb'],
     }),
-    new HtmlWebpackPlugin({
-      template: './index.html',
-      filename: './index.html',
-      chunks: ['index'],
-    }),
+    // new HtmlWebpackPlugin({
+    //   template: './index.html',
+    //   filename: './index.html',
+    //   chunks: ['index'],
+    // }),
   ],
 };

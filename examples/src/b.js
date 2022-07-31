@@ -5,7 +5,7 @@ class B {
   render() {
     this.a = 1;
     console.log(window);
-
+    const x = 1;
     return x;
   }
 }

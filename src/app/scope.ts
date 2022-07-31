@@ -29,6 +29,8 @@ export class Scope extends SandboxNode implements ScopeInterface {
   deferTask = new Set<ScriptSourceType>();
   asyncTask = new Set<ScriptSourceType>();
   styleTask = new Set<StyleSourceType>();
+  pendingTask = new Set<ScriptSourceType>();
+  resolvedMap = new Map<string, any>();
   constructor(name: string, options: ScopeOptions) {
     super(name, options);
     this.keepalive = options.keepalive;
@@ -38,13 +40,17 @@ export class Scope extends SandboxNode implements ScopeInterface {
     const task = fetchSource(info.url);
     info.promise = task;
     this.scriptsMap.set(src, info);
-    if (info.defer) {
-      this.deferTask.add(info);
-    } else {
-      this.asyncTask.add(info);
-    }
     if (isDynamic) {
-      scheduleTask(this.resolveScriptSource.bind(this));
+      this.pendingTask.add(info);
+      if (isDynamic) {
+        scheduleTask(this.resolvePendingScriptSource.bind(this));
+      }
+    } else {
+      if (info.defer) {
+        this.deferTask.add(info);
+      } else {
+        this.asyncTask.add(info);
+      }
     }
   }
   addStyle(src: string, info: StyleSourceType) {
@@ -61,6 +67,23 @@ export class Scope extends SandboxNode implements ScopeInterface {
   async resolveScriptSource() {
     await this.runDeferScript();
     this.runAsyncScript();
+  }
+  resolvePendingScriptSource() {
+    for (const task of this.pendingTask) {
+      task.promise
+        .then((code: string) => {
+          task.code = code;
+          this.execScriptUseStrict([task]);
+        })
+        .catch((e) => {
+          if (typeof task.onerror === 'function') {
+            const event = { target: { type: 'error', src: task.url } };
+            task.onerror(event);
+          }
+          console.error('script load failed!');
+        });
+    }
+    this.pendingTask.clear();
   }
   // 同步执行script
   async runDeferScript() {
@@ -82,13 +105,15 @@ export class Scope extends SandboxNode implements ScopeInterface {
             })
             .catch((e) => {
               if (typeof task.value.onerror === 'function') {
-                task.value.onerror();
+                const event = { target: { type: 'error', src: task.value.url } };
+                task.value.onerror(event);
               }
               console.error(e);
               reject();
             });
         } else {
           resolve(queue);
+          this.deferTask.clear();
         }
       };
       runTask(iterator);
@@ -106,11 +131,13 @@ export class Scope extends SandboxNode implements ScopeInterface {
         })
         .catch((e) => {
           if (typeof task.onerror === 'function') {
-            task.onerror();
+            const event = { target: { type: 'error', src: task.url } };
+            task.onerror(event);
           }
           console.error('script load failed!');
         });
     }
+    this.asyncTask.clear();
   }
   resolveStyles() {
     for (const task of this.styleTask) {
@@ -130,23 +157,29 @@ export class Scope extends SandboxNode implements ScopeInterface {
 
   execScriptUseStrict(queue: ScriptSourceType[]) {
     const scriptInfo = queue.shift();
-    if (!scriptInfo) return;
-    let code = `"use strict";(function f(window,self,global){;${scriptInfo.code};\n}).call(this,this,this,this);`;
+
+    if (!scriptInfo || this.resolvedMap.has(scriptInfo.url)) return;
+
+    let code = `return (function f(window,self,global){;return ${scriptInfo.code};\n}).call(this,this,this,this);`;
     if (scriptInfo.fileName) {
       // code += '\n//# sourceMappingURL=' + scriptInfo.fileName + '.map \n';
     }
     try {
       const fn = new Function(code);
       // console.log(fn.toString());
-      fn.call(this.currentWindow);
+      const result = fn.call(window);
       if (typeof scriptInfo.onload === 'function') {
-        scriptInfo.onload();
+        const event = { target: { type: 'load', src: scriptInfo.url } };
+        scriptInfo.onload(event);
         console.log('script exclude finish!');
       }
+      this.resolvedMap.set(scriptInfo.url, result);
     } catch (e) {
       if (typeof scriptInfo.onerror === 'function') {
-        scriptInfo.onerror();
+        const event = { target: { type: 'error', src: scriptInfo.url } };
+        scriptInfo.onerror(event);
       }
+      this.resolvedMap.set(scriptInfo.url, e);
       // console.error(e);
       throw Error(e);
     }

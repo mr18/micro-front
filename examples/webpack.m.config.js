@@ -21,6 +21,7 @@ module.exports = {
     publicPath: '/',
     chunkFilename: '[name].[hash:6].chunk.js',
     libraryTarget: 'umd',
+    chunkLoadingGlobal: 'http9000',
     // pathinfo: true,
   },
   recordsPath: path.join(__dirname, './records.json'),

@@ -63,8 +63,10 @@ export class Application {
     this.container.appendChild(source.oHeadWrap);
     this.container.appendChild(source.oBodyWrap);
 
+    console.log(source);
     this.addSourceTask(source);
     await this.scope.resolveScource();
+    console.log(this.scope);
     return Promise.resolve(console.log(`APP: ${this.name} launch completed!`));
     // document.dispatchEvent(new CustomEvent('DOMContentLoaded'));
   }

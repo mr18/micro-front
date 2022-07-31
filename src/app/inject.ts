@@ -8,7 +8,6 @@ export const rewriteCreateElement = (scope: Scope, instance: Application) => {
   defineLinkElement(scope, instance);
   const win = scope.node.currentWindow;
   (win.document as Document).createElement = function (tagName: string, options?: ElementCreationOptions) {
-    console.log(tagName);
     if (tagName === 'script') {
       return originCreateElement.call(this, tagName, { is: 'micro-script' });
     } else if (tagName === 'link') {

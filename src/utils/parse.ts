@@ -61,6 +61,7 @@ export const parseHtmlSource = (html: string, _location: Record<PropertyKey, any
         module: ele.getAttribute('module') !== null,
         nomodule: ele.getAttribute('nomodule') !== null,
         fileName: parseFileName(src),
+        ele: ele,
       });
     } else if (type === 'link') {
       styles.set(src, {

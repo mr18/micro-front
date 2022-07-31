@@ -66,7 +66,7 @@ export class Sandbox implements SandboxInterface {
           } else {
             originGetter = Reflect.get(sandbox.parentSandbox.currentWindow, key);
           }
-          // console.log(key, originGetter);
+          console.log(key, originGetter);
           return originGetter;
         }
       },
@@ -85,6 +85,7 @@ export class Sandbox implements SandboxInterface {
           Reflect.set(target, key, value);
         }
         declaredMap.set(key, value);
+        console.log(key);
         return true;
       },
       defineProperty: (target: GlobalProxy, key: PropertyKey, value: PropertyDescriptor) => {

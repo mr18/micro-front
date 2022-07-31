@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "webpack-dev-server  --mode=development --config ./webpack.config.js --progress",
     "dev:m": "webpack-dev-server  --mode=development --config ./webpack.m.config.js --progress",
-    "build": "webpack --mode=production --config ./webpack.build.config.js --progress"
+    "build": "webpack --mode=production --config ./webpack.build.config.js --progress",
+    "build:dev": "webpack --mode=production --config ./webpack.config.js --progress"
   },
   "author": "",
   "license": "ISC",

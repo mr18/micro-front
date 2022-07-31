@@ -4,11 +4,11 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
   entry: {
-    aaa: path.resolve(__dirname, './src/a.js'),
-    bbb: {
-      import: path.resolve(__dirname, './src/b.js'),
-      runtime: 'runtime-111',
-    },
+    // aaa: path.resolve(__dirname, './src/a.js'),
+    // bbb: {
+    //   import: path.resolve(__dirname, './src/b.js'),
+    //   runtime: 'runtime-111',
+    // },
     index: {
       import: path.resolve(__dirname, './src/index.js'),
       runtime: 'runtime-111',
@@ -21,6 +21,7 @@ module.exports = {
     publicPath: '/',
     chunkFilename: '[name].[hash:6].chunk.js',
     libraryTarget: 'umd',
+    chunkLoadingGlobal: 'http9900',
     // pathinfo: true,
   },
   recordsPath: path.join(__dirname, './records.json'),
