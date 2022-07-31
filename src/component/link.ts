@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Logger from '../utils/logger';
 const MicroLinkName = 'micro-link';
-export const defineLinkElement = (scope) => {
+export const defineLinkElement = (scope, options) => {
   const win = scope.node.currentWindow;
   class LinkElement extends HTMLLinkElement {
     href: string;
@@ -22,19 +22,19 @@ export const defineLinkElement = (scope) => {
     connectedCallback() {
       scope.addStyle(this.href, 'style');
       this.remove();
-      Logger.log('插入');
+      Logger.log('link插入');
     }
     // 当 custom element 从文档 DOM 中删除时，被调用。
     disconnectedCallback() {
-      Logger.log('删除');
+      Logger.log('link删除');
     }
     // 当 custom element 被移动到新的文档时，被调用。
     adoptedCallback() {
-      Logger.log('移动');
+      Logger.log('link移动');
     }
     // 当 custom element 增加、删除、修改自身属性时，被调用。
     attributeChangedCallback() {
-      Logger.log('插入');
+      Logger.log('link修改属性');
     }
   }
   if (!win.customElements.get(MicroLinkName)) {

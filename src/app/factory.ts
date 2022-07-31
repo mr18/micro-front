@@ -1,6 +1,7 @@
-import { parseHtmlSource, parseLocationUrl } from 'src/utils/parse';
+import { parseHtmlSource, parseLocationUrl, resolvePath } from 'src/utils/parse';
 import { defineFreezeProperty } from 'src/utils/utils';
 import { FrameWork, ProvideOptions } from './frame';
+import { rewriteCreateElement } from './inject';
 import { fetchSource } from './patch';
 import { Scope, ScriptSourceType, StyleSourceType } from './scope';
 
@@ -49,10 +50,7 @@ export class Application {
     }
 
     this.scope = this.manager.provide(this.name, this.options);
-    // defineSciprtElement(this.scope);
-    // defineLinkElement(this.scope);
-    // rewriteCreateElement(this.scope);
-    window.addEventListener('init', () => {});
+    rewriteCreateElement(this.scope, this);
   }
 
   async run() {
@@ -67,15 +65,18 @@ export class Application {
 
     this.addSourceTask(source);
     await this.scope.resolveScource();
-    return Promise.resolve();
+    return Promise.resolve(console.log(`APP: ${this.name} launch completed!`));
     // document.dispatchEvent(new CustomEvent('DOMContentLoaded'));
   }
   private addSourceTask(source: HtmlSourceType) {
     for (const [src, info] of source.scripts) {
-      this.scope.addScript(src, info);
+      this.scope.addScript(src, info, false);
     }
     for (const [src, info] of source.styles) {
       this.scope.addStyle(src, info);
     }
+  }
+  resolvePath(src: string) {
+    return resolvePath(this._location, src);
   }
 }

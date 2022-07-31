@@ -37,6 +37,7 @@
       "runtime-111": 706
     },
     "bySource": {
+      "0 ./node_modules/babel-loader/lib/index.js??ruleSet[1].rules[0]!./src/a.js ./b.js": 541,
       "0 aaa": 139,
       "0 bbb": 892,
       "0 index": 706,
@@ -44,6 +45,7 @@
     },
     "usedIds": [
       139,
+      541,
       706,
       826,
       892
@@ -51,11 +53,15 @@
   },
   "modules": {
     "byIdentifier": {
+      "./node_modules/babel-loader/lib/index.js??ruleSet[1].rules[0]!../lib/index.esm.js": 237,
+      "./node_modules/babel-loader/lib/index.js??ruleSet[1].rules[0]!./src/a.js": 901,
       "./node_modules/babel-loader/lib/index.js??ruleSet[1].rules[0]!./src/a.js|882b1abe4ca9050da0c1ebef5e844526": 498,
       "./node_modules/babel-loader/lib/index.js??ruleSet[1].rules[0]!./src/b.js": 541,
+      "./node_modules/babel-loader/lib/index.js??ruleSet[1].rules[0]!./src/index.js": 506,
       "./node_modules/babel-loader/lib/index.js??ruleSet[1].rules[0]!./src/index.js|73518b6aaf764d6c80dd8d8ba8b0d52c": 526
     },
     "usedIds": [
+      237,
       498,
       526,
       541

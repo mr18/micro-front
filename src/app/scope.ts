@@ -1,13 +1,13 @@
 import { ScopeInterface } from 'sandbox';
 import { NodeTypeOptions, SandboxNode } from 'src/sandbox/sandboxNode';
-import { fetchSource, parseSource, scheduleTask } from './patch';
+import { fetchSource, scheduleTask } from './patch';
 export type ScopeOptions = {
   keepalive?: boolean | undefined;
 } & NodeTypeOptions;
 
 export type StyleSourceType = {
   url: string;
-  promise: Promise<any>;
+  promise?: Promise<any>;
   code?: string;
   ele?: HTMLElement;
   fileName?: string;
@@ -18,6 +18,8 @@ export type ScriptSourceType = {
   module?: boolean;
   nomodule?: boolean;
   code?: string;
+  onload?: Function;
+  onerror?: Function;
 } & StyleSourceType;
 
 export class Scope extends SandboxNode implements ScopeInterface {
@@ -32,14 +34,7 @@ export class Scope extends SandboxNode implements ScopeInterface {
     this.keepalive = options.keepalive;
   }
 
-  pitchSource(url: string) {
-    if (/http(s?):/.test(url)) {
-      return fetchSource(url);
-    }
-    return parseSource(url);
-  }
-
-  addScript(src: string, info: ScriptSourceType) {
+  addScript(src: string, info: ScriptSourceType, isDynamic: boolean = false) {
     const task = fetchSource(info.url);
     info.promise = task;
     this.scriptsMap.set(src, info);
@@ -47,6 +42,9 @@ export class Scope extends SandboxNode implements ScopeInterface {
       this.deferTask.add(info);
     } else {
       this.asyncTask.add(info);
+    }
+    if (isDynamic) {
+      scheduleTask(this.resolveScriptSource.bind(this));
     }
   }
   addStyle(src: string, info: StyleSourceType) {
@@ -57,54 +55,76 @@ export class Scope extends SandboxNode implements ScopeInterface {
   }
   // 取出对应的资源，放到dom中 or 在当前Scope下执行
   async resolveScource() {
-    const iterator = this.deferTask[Symbol.iterator]();
     scheduleTask(this.resolveStyles.bind(this));
-    await this.runDeferScript(iterator);
+    await this.resolveScriptSource();
+  }
+  async resolveScriptSource() {
+    await this.runDeferScript();
     this.runAsyncScript();
   }
   // 同步执行script
-  async runDeferScript(iterator: IterableIterator<ScriptSourceType>) {
+  async runDeferScript() {
+    const iterator: IterableIterator<ScriptSourceType> = this.deferTask[Symbol.iterator]();
     const queue: ScriptSourceType[] = [];
-    return new Promise((resolve: any) => {
+    return new Promise((resolve: any, reject: any) => {
       const runTask = (iterator: IterableIterator<ScriptSourceType>) => {
         const task = iterator.next();
         if (!task.done) {
-          task.value.promise.then((code: string) => {
-            task.value.code = code;
-            queue.push(task.value);
-            if (!task.done) {
-              runTask(iterator);
-            } else {
-              this.execScriptUseStrict(queue);
-              resolve();
-            }
-          });
+          task.value.promise
+            .then((code: string) => {
+              task.value.code = code;
+              queue.push(task.value);
+              if (!task.done) {
+                runTask(iterator);
+              } else {
+                resolve(queue);
+              }
+            })
+            .catch((e) => {
+              if (typeof task.value.onerror === 'function') {
+                task.value.onerror();
+              }
+              console.error(e);
+              reject();
+            });
         } else {
-          this.execScriptUseStrict(queue);
-          resolve();
+          resolve(queue);
         }
       };
       runTask(iterator);
+    }).then((queue: ScriptSourceType[]) => {
+      this.execScriptUseStrict(queue);
     });
   }
   // 异步执行script
   async runAsyncScript() {
     for (const task of this.asyncTask) {
-      task.promise.then((code: string) => {
-        task.code = code;
-        this.execScriptUseStrict([task]);
-      });
+      task.promise
+        .then((code: string) => {
+          task.code = code;
+          this.execScriptUseStrict([task]);
+        })
+        .catch((e) => {
+          if (typeof task.onerror === 'function') {
+            task.onerror();
+          }
+          console.error('script load failed!');
+        });
     }
   }
   resolveStyles() {
     for (const task of this.styleTask) {
-      task.promise.then((code: string) => {
-        if (task.ele) {
-          task.ele.textContent = code;
-        } else {
-          task.code = code;
-        }
-      });
+      task.promise
+        .then((code: string) => {
+          if (task.ele) {
+            task.ele.textContent = code;
+          } else {
+            task.code = code;
+          }
+        })
+        .catch((e) => {
+          console.error('stylesheet link load failed!');
+        });
     }
   }
 
@@ -113,12 +133,23 @@ export class Scope extends SandboxNode implements ScopeInterface {
     if (!scriptInfo) return;
     let code = `"use strict";(function f(window,self,global){;${scriptInfo.code};\n}).call(this,this,this,this);`;
     if (scriptInfo.fileName) {
-      code += `\n//# sourceMappingURL=${scriptInfo.fileName}.map`;
+      // code += '\n//# sourceMappingURL=' + scriptInfo.fileName + '.map \n';
     }
-    const fn = new Function(code);
-
-    // console.log(fn.toString());
-    fn.call(this.currentWindow);
+    try {
+      const fn = new Function(code);
+      // console.log(fn.toString());
+      fn.call(this.currentWindow);
+      if (typeof scriptInfo.onload === 'function') {
+        scriptInfo.onload();
+        console.log('script exclude finish!');
+      }
+    } catch (e) {
+      if (typeof scriptInfo.onerror === 'function') {
+        scriptInfo.onerror();
+      }
+      // console.error(e);
+      throw Error(e);
+    }
 
     while (queue.length) {
       this.execScriptUseStrict(queue);

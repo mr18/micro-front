@@ -4,10 +4,8 @@ class B {
   c = 1;
   render() {
     this.a = 1;
-    console.log(b);
-    // import('../chain.js').then((mod) => {
-    //   console.log(mod.default);
-    // });
+    console.log(window);
+
     return x;
   }
 }

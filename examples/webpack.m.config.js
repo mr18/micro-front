@@ -1,12 +1,12 @@
-const path = require("path");
-const webpack = require("webpack");
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
+const path = require('path');
+const webpack = require('webpack');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
   entry: {
-    aaa: path.resolve(__dirname, "./src/a.js"),
+    aaa: path.resolve(__dirname, './src/a.js'),
     bbb: {
-      import: path.resolve(__dirname, "./src/b.js"),
+      import: path.resolve(__dirname, './src/b.js'),
       // runtime: "runtime-111",
     },
     // index: {
@@ -14,21 +14,21 @@ module.exports = {
     //   runtime: "runtime-111",
     // },
   },
-  devtool: "source-map",
+  devtool: 'source-map',
   output: {
-    path: path.resolve(__dirname, "./srcDist"), //打包后的文件存放的地方
-    filename: "[name].entry.js", //打包后输出文件的文件名
-    publicPath: "/",
-    chunkFilename: "[name].[hash:6].chunk.js",
-    libraryTarget: "umd",
+    path: path.resolve(__dirname, './dist'), //打包后的文件存放的地方
+    filename: '[name].entry.js', //打包后输出文件的文件名
+    publicPath: '/',
+    chunkFilename: '[name].[hash:6].chunk.js',
+    libraryTarget: 'umd',
     // pathinfo: true,
   },
-  recordsPath: path.join(__dirname, "./records.json"),
+  recordsPath: path.join(__dirname, './records.json'),
   resolve: {
-    extensions: [".js", ".jsx"],
+    extensions: ['.js', '.jsx'],
   },
   externals: {
-    react: "commonjs2 react",
+    react: 'commonjs2 react',
     jquery: true,
   },
   experiments: {
@@ -46,7 +46,7 @@ module.exports = {
   devServer: {
     compress: true,
     headers: {
-      "Access-Control-Allow-Origin": "*",
+      'Access-Control-Allow-Origin': '*',
     },
     port: 9900,
   },
@@ -79,10 +79,10 @@ module.exports = {
     rules: [
       {
         test: /(\.jsx|\.js)$/,
-        loader: "babel-loader",
+        loader: 'babel-loader',
         exclude: /node_modules/,
         options: {
-          presets: ["@babel/preset-env"],
+          presets: ['@babel/preset-env'],
         },
       },
     ],
@@ -91,19 +91,19 @@ module.exports = {
   plugins: [
     // new CleanWebpackPlugin(),
     new webpack.ProvidePlugin({
-      $: "jquery",
-      jQuery: "jquery",
+      $: 'jquery',
+      jQuery: 'jquery',
     }),
     new webpack.DefinePlugin({
-      "process.env": {
-        myVar: JSON.stringify("VARVAR"),
+      'process.env': {
+        myVar: JSON.stringify('VARVAR'),
       },
     }),
 
     new HtmlWebpackPlugin({
-      template: "./micro.html",
-      filename: "./index.html",
-      chunks: ["aaa"],
+      template: './micro.html',
+      filename: './index.html',
+      chunks: ['aaa'],
     }),
   ],
 };

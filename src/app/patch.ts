@@ -12,25 +12,16 @@ export const fetchSource = (url: string, options?: object) => {
             }
           } else {
             reject(res);
-            console.error(res);
+            // console.error(res);
           }
         })
         .catch((e) => {
           reject(e);
-          console.error(e);
+          // console.error(e);
         });
     } catch (e) {
       reject(e);
-      console.error(e);
-    }
-  });
-};
-export const parseSource = (url: string, options?: object) => {
-  return new Promise((resolve, resject) => {
-    if (url) {
-      resolve(url);
-    } else {
-      resject(options);
+      // console.error(e);
     }
   });
 };

@@ -135,6 +135,6 @@ export const resolvePath = (loc: Record<PropertyKey, any>, url: string) => {
 export const parseFileName = (path: string) => {
   if (/[^\.]+\.[^\.\/]+$/.test(path)) {
     const file = path.split('/');
-    return file[file.length - 1].trim();
+    return (file[file.length - 1] || '').trim();
   }
 };

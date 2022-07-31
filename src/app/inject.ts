@@ -1,9 +1,14 @@
+import { defineLinkElement, defineSciprtElement } from 'src/component';
+import { Application } from './factory';
 import { Scope } from './scope';
 
 const originCreateElement = document.createElement;
-export const rewriteCreateElement = (scope: Scope) => {
+export const rewriteCreateElement = (scope: Scope, instance: Application) => {
+  defineSciprtElement(scope, instance);
+  defineLinkElement(scope, instance);
   const win = scope.node.currentWindow;
   (win.document as Document).createElement = function (tagName: string, options?: ElementCreationOptions) {
+    console.log(tagName);
     if (tagName === 'script') {
       return originCreateElement.call(this, tagName, { is: 'micro-script' });
     } else if (tagName === 'link') {

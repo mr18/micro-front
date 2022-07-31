@@ -16,7 +16,7 @@ module.exports = {
   },
   devtool: 'source-map',
   output: {
-    path: path.resolve(__dirname, './srcDist'), //打包后的文件存放的地方
+    path: path.resolve(__dirname, './dist'), //打包后的文件存放的地方
     filename: '[name].entry.js', //打包后输出文件的文件名
     publicPath: '/',
     chunkFilename: '[name].[hash:6].chunk.js',

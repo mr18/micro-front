@@ -31,7 +31,7 @@ export class FrameWork extends SandboxManager<Scope, SandboxTree<SandboxNode>> {
         this.currentTree = tree;
       } else {
         // sandboxNode = this._provide(name, keepalive);
-        throw new Error(`can not provide sandbox out node: ${parent.name}，because this sandbox node is removed;`);
+        throw new Error(`can not provide sandbox out node: ${parent.name}, because this sandbox node is removed;`);
       }
     } else {
       tree = new SandboxTree();
