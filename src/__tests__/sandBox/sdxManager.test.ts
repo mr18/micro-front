@@ -43,10 +43,10 @@ describe('sandbox manager', () => {
 
     // 无法在失效后的 sanbox 中挂载新的 sandbox
 
-    expect(() => manager.provide('x', { keepalive: true, snapshot: false, parent: node2 })).toThrow();
+    expect(() => manager.provide('x', { keepalive: true, parent: node2 })).toThrow();
 
-    const nodey = manager.provide('y', { keepalive: true, snapshot: false, parent: nodec });
-    const nodez = manager.provide('z', { keepalive: true, snapshot: false, parent: nodey });
+    const nodey = manager.provide('y', { keepalive: true, parent: nodec });
+    const nodez = manager.provide('z', { keepalive: true, parent: nodey });
 
     expect(nodez?.parent).toBe(nodey);
     expect(nodez?.top).toBe(nodea);

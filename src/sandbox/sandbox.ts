@@ -6,6 +6,8 @@ import proxyWin from './proxyWin';
 let uuid = 0;
 /** Sandbox 惰性取值， 使用 window[key] 获取全局变量的值
  */
+export const isDeclearedFnName = `__IS_DYNAMIC_DECLEARED_VAR__`;
+export const getSandBoxInstanceFnName = `__GET_SANDBOX_INSTANCE__`;
 
 // export const sleepSandboxMap = new Map<Sandbox,>()
 export class Sandbox implements SandboxInterface {
@@ -13,29 +15,26 @@ export class Sandbox implements SandboxInterface {
   sandboxId: number;
   parentSandbox: GlobalProxyType; // 当前 Sandbox 父集
   currentWindow: GlobalProxy = {}; // 所有取值复制操作都在currentWindow上进行
-  snapshot: boolean;
   active: boolean;
-  constructor(sandbox?: Sandbox | undefined | boolean, shareDataKeys?: Array<string>) {
+  constructor(sandbox?: Sandbox | undefined, shareDataKeys?: Array<string>) {
     this.SHARE_DATA_KEYS = shareDataKeys || [];
     this.sandboxId = ++uuid;
     if (sandbox instanceof Sandbox) {
-      this.snapshot = sandbox.snapshot;
       this.parentSandbox = sandbox as any as GlobalProxyType;
     } else {
-      this.snapshot = sandbox === true;
-      this.parentSandbox = proxyWin(this.snapshot);
+      this.parentSandbox = proxyWin() as unknown as GlobalProxyType;
     }
     this.setup();
   }
   setup() {
     const { proxy, declaredMap } = this.proxy(this.currentWindow, this);
-    if (!objectHasProperty(this, 'isDecleared')) {
-      defineFreezeProperty(this, 'isDecleared', (key: PropertyKey) => {
+    if (!objectHasProperty(this, isDeclearedFnName)) {
+      defineFreezeProperty(this, isDeclearedFnName, (key: PropertyKey) => {
         return declaredMap.has(key);
       });
     }
-    if (!objectHasProperty(this.currentWindow, '__getSandBoxInstance__')) {
-      defineFreezeProperty(this.currentWindow, '__getSandBoxInstance__', () => {
+    if (!objectHasProperty(this.currentWindow, getSandBoxInstanceFnName)) {
+      defineFreezeProperty(this.currentWindow, getSandBoxInstanceFnName, () => {
         return this;
       });
     }
@@ -57,7 +56,7 @@ export class Sandbox implements SandboxInterface {
         } else {
           // 如果当前sandbox不存在，则向上查找
           let originGetter: any;
-          if (sandbox.parentSandbox.isDecleared(key)) {
+          if (sandbox.parentSandbox[isDeclearedFnName](key)) {
             // 同时向上查找;
             let sdbx = sandbox.parentSandbox.parentSandbox;
             while (sdbx) {
@@ -104,7 +103,7 @@ export class Sandbox implements SandboxInterface {
     };
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  isDecleared(_key: PropertyKey): boolean {
+  [isDeclearedFnName](_key: PropertyKey): boolean {
     throw new Error('Method not implemented.');
   }
   isShareKey(target: Sandbox, key: unknown) {

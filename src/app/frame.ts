@@ -1,3 +1,4 @@
+import { getSandBoxInstanceFnName } from 'src/sandbox/sandbox';
 import { SandboxNode } from 'src/sandbox/sandboxNode';
 import { SandboxTree } from 'src/sandbox/sandboxTree';
 import { SandboxManager } from '../sandbox/manager';
@@ -11,7 +12,7 @@ export class FrameWork extends SandboxManager<Scope, SandboxTree<SandboxNode>> {
     if (this.nodeNameList.get(name)) {
       throw new Error(`can not provide same sandbox named:${name}.`);
     }
-    const getSandBoxInstance = (self as any).__getSandBoxInstance__ || (window as any).__getSandBoxInstance__;
+    const getSandBoxInstance = (self as any)[getSandBoxInstanceFnName] || (window as any)[getSandBoxInstanceFnName];
     if (getSandBoxInstance && typeof getSandBoxInstance === 'function') {
       const parent = getSandBoxInstance();
       if (parent instanceof Scope) {

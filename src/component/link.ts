@@ -1,29 +1,27 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Logger from '../utils/logger';
-
+const MicroLinkName = 'micro-link';
 export const defineLinkElement = (scope) => {
   const win = scope.node.currentWindow;
-  class ScriptElement extends HTMLScriptElement {
-    src: string;
+  class LinkElement extends HTMLLinkElement {
+    href: string;
     constructor() {
       super();
-      Object.defineProperty(this, 'src', {
+      Object.defineProperty(this, 'href', {
         get() {
           return '';
         },
         set: (value: string) => {
-          this.src = value;
+          this.href = value;
           return true;
         },
       });
     }
-    private pickSource(src: string) {
-      scope.pickSource(this.src, 'script');
-    }
 
     // 当 custom element 首次被插入文档 DOM 时，被调用。
     connectedCallback() {
-      scope.pickSource(this.src, 'script');
+      scope.addStyle(this.href, 'style');
+      this.remove();
       Logger.log('插入');
     }
     // 当 custom element 从文档 DOM 中删除时，被调用。
@@ -39,6 +37,7 @@ export const defineLinkElement = (scope) => {
       Logger.log('插入');
     }
   }
-
-  win.customElements.define('micro-script', ScriptElement, { extends: 'script' });
+  if (!win.customElements.get(MicroLinkName)) {
+    win.customElements.define(MicroLinkName, LinkElement, { extends: 'link' });
+  }
 };

@@ -10,9 +10,9 @@ describe('sandbox property', () => {
 
   test('sanbox can read global vars, but cant not effect parent sandbox or global vars', async () => {
     global.key = 'key';
-    const SDboxPoxySp = new Sandbox(true);
+    const SDboxPoxySp = new Sandbox();
     const SDboxPoxySp1 = new Sandbox(SDboxPoxySp); // 继承SDboxPoxySp模式
-    const SDboxPoxy1 = new Sandbox(false);
+    const SDboxPoxy1 = new Sandbox();
 
     expect(SDboxPoxySp.currentWindow.key).toBe(global.key);
     expect(SDboxPoxySp1.currentWindow.key).toBe(global.key);
@@ -20,10 +20,11 @@ describe('sandbox property', () => {
 
     // snapshot sanbox 无法读取之后定义的值无法获取
     global.key2 = 'key2';
-    expect(SDboxPoxySp.currentWindow.key2).toBe(undefined);
-    expect(SDboxPoxySp1.currentWindow.key2).toBe(undefined);
-    // global sanbox 可以读取之后定义的值无法获取
+    expect(SDboxPoxySp.currentWindow.key2).toBe('key2');
+    expect(SDboxPoxySp1.currentWindow.key2).toBe('key2');
     expect(SDboxPoxy1.currentWindow.key2).toBe(global.key2);
+
+    // sanbox 定义的值无法获取，不共享
 
     SDboxPoxySp.currentWindow.a = 'a';
     SDboxPoxySp1.currentWindow.b = 'b';
@@ -37,9 +38,9 @@ describe('sandbox property', () => {
   });
 
   test('global vars is share in all sanboxs', async () => {
-    const SDboxPoxySp = new Sandbox(true);
+    const SDboxPoxySp = new Sandbox();
     const SDboxPoxySp1 = new Sandbox(SDboxPoxySp); // 继承SDboxPoxySp模式
-    const SDboxPoxy1 = new Sandbox(false);
+    const SDboxPoxy1 = new Sandbox();
 
     const location = global.location;
 
@@ -61,11 +62,11 @@ describe('sandbox property', () => {
     const shareKeys = ['share', 'vars'];
     const subSahreKeys = ['share', 'vars', 'subkeys'];
 
-    const SDboxPoxySp = new Sandbox(true, shareKeys);
+    const SDboxPoxySp = new Sandbox(undefined, shareKeys);
     const SDboxPoxySp1 = new Sandbox(SDboxPoxySp, shareKeys);
     const SDboxPoxySp2 = new Sandbox(SDboxPoxySp1, subSahreKeys);
 
-    const SDboxPoxy = new Sandbox(false);
+    const SDboxPoxy = new Sandbox();
     const SDboxPoxy1 = new Sandbox(SDboxPoxy, shareKeys);
     const SDboxPoxy2 = new Sandbox(SDboxPoxy, subSahreKeys);
 

@@ -8,7 +8,6 @@ export const equalNode = (node, sanbox) => {
 };
 export type NodeTypeOptions = {
   parent?: SandboxNode;
-  snapshot?: boolean; // 沙箱模式，是否是快照模式
   shareScope?: Array<string>;
 };
 export class SandboxNode extends Sandbox {
@@ -18,7 +17,7 @@ export class SandboxNode extends Sandbox {
   top: SandboxNode;
   node: this;
   constructor(name: string, options: NodeTypeOptions) {
-    super(options.parent || options.snapshot, options.shareScope);
+    super(options.parent, options.shareScope);
     this.node = this;
     this.name = name;
     this.parent = options.parent;

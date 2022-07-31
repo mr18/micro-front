@@ -1,10 +1,15 @@
 import { GlobalProxyType } from 'sandbox';
-import { createObjectSnapshot, defineFreezeProperty, objectHasProperty } from '../../src/utils/utils';
+import { createObjectSnapshot, defineConfigurableProperty, defineFreezeProperty, objectHasProperty } from '../../src/utils/utils';
+import { isDeclearedFnName } from './sandbox';
 
-export default function proxyWin(snapshot: boolean): GlobalProxyType {
+export function __proxyWin(snapshot: boolean): GlobalProxyType {
+  // 浏览器环境下  createObjectSnapshot 不兼容
   const windowObj = snapshot ? createObjectSnapshot(global) : global;
   // eslint-disable-next-line no-new
   const newObj: GlobalProxyType = new Proxy(windowObj, {
+    get(target: object, key: PropertyKey) {
+      return Reflect.get(target, key);
+    },
     // 仅当赋值给共享数据时调用
     set: (target: object, key: PropertyKey, value: unknown) => {
       if (snapshot) {
@@ -16,13 +21,28 @@ export default function proxyWin(snapshot: boolean): GlobalProxyType {
       return true;
     },
   });
-  if (!objectHasProperty(newObj, 'isDecleared')) {
-    defineFreezeProperty(newObj, 'isDecleared', (key: PropertyKey) => {
+  if (!objectHasProperty(newObj, isDeclearedFnName)) {
+    defineFreezeProperty(newObj, isDeclearedFnName, (key: PropertyKey) => {
       return !objectHasProperty(newObj, key);
     });
   }
   if (!objectHasProperty(newObj, 'currentWindow')) {
-    defineFreezeProperty(newObj, 'currentWindow', newObj);
+    defineConfigurableProperty(newObj, 'currentWindow', newObj);
   }
+
   return newObj;
+}
+
+export default function proxyWin() {
+  const windowObj = window;
+  if (!objectHasProperty(windowObj, isDeclearedFnName)) {
+    defineFreezeProperty(windowObj, isDeclearedFnName, () => {
+      return false;
+    });
+  }
+  if (!objectHasProperty(windowObj, 'currentWindow')) {
+    defineConfigurableProperty(windowObj, 'currentWindow', windowObj);
+  }
+
+  return windowObj;
 }
