@@ -54,7 +54,6 @@ export class Application {
     this._location = parseLocationUrl(this.options.url);
 
     const html = (await fetchSource(this._location.href)) as string;
-    console.log(html);
 
     const source: HtmlSourceType = parseHtmlSource(html, this._location);
 
