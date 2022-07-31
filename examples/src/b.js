@@ -1,13 +1,11 @@
-import A from "./a";
-const b = "BBB";
+const b = 'BBB';
 class B {
   static xx = 1;
   c = 1;
   render() {
     this.a = 1;
-    let x = new A();
     console.log(b);
-    import("../chain.js").then((mod) => {
+    import('../chain.js').then((mod) => {
       console.log(mod.default);
     });
     return x;
