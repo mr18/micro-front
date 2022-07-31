@@ -31,9 +31,9 @@ export const parseHtmlSource = (html: string, _location: Record<PropertyKey, any
         parent.replaceChild(document.createComment('script element removed by micro framework'), ele);
       } else if (tagName === 'link') {
         const href = ele.getAttribute('href');
-
         const replaceEle = document.createElement('style');
         pickSourceInfo(href, ele, tagName, replaceEle);
+        parent.insertBefore(document.createComment('link element is replaced to style element by micro framework'), ele);
         parent.replaceChild(replaceEle, ele);
       } else if (tagName === 'a') {
         ele.setAttribute('href', resolvePath(_location, ele.getAttribute('href')));

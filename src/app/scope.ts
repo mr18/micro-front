@@ -7,21 +7,19 @@ export type ScopeOptions = {
 
 export type StyleSourceType = {
   url: string;
-  promise?: Promise<any>;
+  promise: Promise<any>;
   code?: string;
   ele?: HTMLElement;
   fileName?: string;
 };
 export type ScriptSourceType = {
-  url: string;
-  promise?: Promise<any>;
   defer?: boolean;
   async?: boolean;
   module?: boolean;
   nomodule?: boolean;
   code?: string;
-  fileName?: string;
-};
+} & StyleSourceType;
+
 export class Scope extends SandboxNode implements ScopeInterface {
   scriptsMap = new Map<string, StyleSourceType>();
   stylesMap = new Map<string, StyleSourceType>();
@@ -67,7 +65,7 @@ export class Scope extends SandboxNode implements ScopeInterface {
   }
   async runDeferScript(iterator: IterableIterator<ScriptSourceType>) {
     const queue: ScriptSourceType[] = [];
-    return new Promise((resolve) => {
+    return new Promise((resolve: any) => {
       const runTask = (iterator: IterableIterator<ScriptSourceType>) => {
         const task = iterator.next();
         if (!task.done) {
@@ -78,10 +76,12 @@ export class Scope extends SandboxNode implements ScopeInterface {
               runTask(iterator);
             } else {
               this.execScriptUseStrict(queue);
+              resolve();
             }
           });
         } else {
           this.execScriptUseStrict(queue);
+          resolve();
         }
       };
       runTask(iterator);
