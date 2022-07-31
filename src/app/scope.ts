@@ -55,14 +55,14 @@ export class Scope extends SandboxNode implements ScopeInterface {
     this.stylesMap.set(src, info);
     this.styleTask.add(info);
   }
-
+  // 取出对应的资源，放到dom中 or 在当前Scope下执行
   async resolveScource() {
     const iterator = this.deferTask[Symbol.iterator]();
-    console.log(0);
     scheduleTask(this.resolveStyles.bind(this));
     await this.runDeferScript(iterator);
     this.runAsyncScript();
   }
+  // 同步执行script
   async runDeferScript(iterator: IterableIterator<ScriptSourceType>) {
     const queue: ScriptSourceType[] = [];
     return new Promise((resolve: any) => {
@@ -87,7 +87,7 @@ export class Scope extends SandboxNode implements ScopeInterface {
       runTask(iterator);
     });
   }
-
+  // 异步执行script
   async runAsyncScript() {
     for (const task of this.asyncTask) {
       task.promise.then((code: string) => {
@@ -99,7 +99,6 @@ export class Scope extends SandboxNode implements ScopeInterface {
   resolveStyles() {
     for (const task of this.styleTask) {
       task.promise.then((code: string) => {
-        console.log(code);
         if (task.ele) {
           task.ele.textContent = code;
         } else {
@@ -108,11 +107,11 @@ export class Scope extends SandboxNode implements ScopeInterface {
       });
     }
   }
+
   execScriptUseStrict(queue: ScriptSourceType[]) {
     const scriptInfo = queue.shift();
     if (!scriptInfo) return;
-    let code = `;(function f(window,self,golbal){;${scriptInfo.code};\n}).bind(this,this,this,this)();`;
-    console.log(scriptInfo.fileName);
+    let code = `"use strict";(function f(window,self,global){;${scriptInfo.code};\n}).bind(this,this,this,this)();`;
     if (scriptInfo.fileName) {
       code += `\n//# sourceMappingURL=${scriptInfo.fileName}.map`;
     }

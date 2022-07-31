@@ -2,7 +2,6 @@ import { Scope } from './scope';
 
 const originCreateElement = document.createElement;
 export const rewriteCreateElement = (scope: Scope) => {
-  console.log(1);
   const win = scope.node.currentWindow;
   (win.document as Document).createElement = function (tagName: string, options?: ElementCreationOptions) {
     if (tagName === 'script') {

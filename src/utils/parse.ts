@@ -1,6 +1,6 @@
 export const parseHtmlSource = (html: string, _location: Record<PropertyKey, any>) => {
-  const scripts = new Map<string, object>();
-  const styles = new Map<string, object>();
+  const scripts = new Map<string, any>();
+  const styles = new Map<string, any>();
   const headHtml = (html.match(/<head>(.*)<\/head>/is) || [])[1];
   const bodyHtml = (html.match(/<body>(.*)<\/body>/is) || [])[1];
   const oHeadWrap: HTMLElement = document.createElement('div');
@@ -25,21 +25,28 @@ export const parseHtmlSource = (html: string, _location: Record<PropertyKey, any
     }
     if (ele.nodeType == 1) {
       const tagName = ele.tagName.toLowerCase();
+      // 收集script资源
       if (tagName === 'script') {
         const src = ele.getAttribute('src');
         pickSourceInfo(src, ele, tagName);
         parent.replaceChild(document.createComment('script element removed by micro framework'), ele);
-      } else if (tagName === 'link') {
+      }
+      // 收集link资源
+      else if (tagName === 'link') {
         const href = ele.getAttribute('href');
         const replaceEle = document.createElement('style');
         pickSourceInfo(href, ele, tagName, replaceEle);
         parent.insertBefore(document.createComment('link element is replaced to style element by micro framework'), ele);
         parent.replaceChild(replaceEle, ele);
-      } else if (tagName === 'a') {
+      }
+      // 替换资源路径
+      else if (tagName === 'a') {
         ele.setAttribute('href', resolvePath(_location, ele.getAttribute('href')));
       } else if (tagName === 'img' || tagName === 'iframe') {
         ele.setAttribute('src', ele.getAttribute('src'));
-      } else if (tagName === 'title' || tagName === 'meta') {
+      }
+      // 移除无用资源
+      else if (tagName === 'title' || tagName === 'meta') {
         parent.replaceChild(document.createComment(`${tagName} element removed by micro framework`), ele);
       }
     }

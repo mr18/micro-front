@@ -56,7 +56,7 @@ export class Sandbox implements SandboxInterface {
         } else {
           // 如果当前sandbox不存在，则向上查找
           let originGetter: any;
-          if (sandbox.parentSandbox[isDeclearedFnName](key)) {
+          if (sandbox.parentSandbox[isDeclearedFnName] && sandbox.parentSandbox[isDeclearedFnName](key)) {
             // 同时向上查找;
             let sdbx = sandbox.parentSandbox.parentSandbox;
             while (sdbx) {
@@ -66,6 +66,7 @@ export class Sandbox implements SandboxInterface {
           } else {
             originGetter = Reflect.get(sandbox.parentSandbox.currentWindow, key);
           }
+          console.log(key, originGetter);
           return originGetter;
         }
       },

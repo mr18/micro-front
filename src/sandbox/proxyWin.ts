@@ -35,14 +35,18 @@ export function __proxyWin(snapshot: boolean): GlobalProxyType {
 
 export default function proxyWin() {
   const windowObj = window;
-  if (!objectHasProperty(windowObj, isDeclearedFnName)) {
-    defineFreezeProperty(windowObj, isDeclearedFnName, () => {
-      return false;
-    });
-  }
-  if (!objectHasProperty(windowObj, 'currentWindow')) {
-    defineConfigurableProperty(windowObj, 'currentWindow', windowObj);
-  }
+  const newObj = new Proxy(windowObj, {
+    get(target: object, key: PropertyKey) {
+      let getter = Reflect.get(target, key);
+      if (typeof getter === 'function') {
+        getter = getter.bind(target);
+      }
+      return getter;
+    },
+  });
 
-  return windowObj;
+  if (!objectHasProperty(newObj, 'currentWindow')) {
+    defineFreezeProperty(newObj, 'currentWindow', newObj);
+  }
+  return newObj;
 }

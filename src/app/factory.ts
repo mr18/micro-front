@@ -2,7 +2,7 @@ import { parseHtmlSource, parseLocationUrl } from 'src/utils/parse';
 import { defineFreezeProperty } from 'src/utils/utils';
 import { FrameWork, provideOptions } from './frame';
 import { fetchSource } from './patch';
-import { Scope } from './scope';
+import { Scope, ScriptSourceType, StyleSourceType } from './scope';
 
 export const FrameName = '__MICRO_FRAME_WORK__';
 
@@ -12,6 +12,12 @@ export type AppOptions = {
   container: string | Element;
 } & provideOptions;
 
+export type HtmlSourceType = {
+  scripts: Map<string, ScriptSourceType>;
+  styles: Map<string, StyleSourceType>;
+  oHeadWrap: HTMLElement;
+  oBodyWrap: HTMLElement;
+};
 export class Application {
   name: string;
   manager: FrameWork;
@@ -48,17 +54,17 @@ export class Application {
     this._location = parseLocationUrl(this.options.url);
 
     const html = (await fetchSource(this._location.href)) as string;
+    console.log(html);
 
-    const source = parseHtmlSource(html, this._location);
+    const source: HtmlSourceType = parseHtmlSource(html, this._location);
 
     this.container.appendChild(source.oHeadWrap);
     this.container.appendChild(source.oBodyWrap);
 
-    this.addTask(source);
-
+    this.addSourceTask(source);
     this.scope.resolveScource();
   }
-  private addTask(source) {
+  private addSourceTask(source: HtmlSourceType) {
     for (const [src, info] of source.scripts) {
       this.scope.addScript(src, info);
     }
