@@ -1,0 +1,64 @@
+{
+  "HtmlWebpackCompiler": [
+    {
+      "chunks": {
+        "byName": {
+          "HtmlWebpackPlugin_0-0": 563,
+          "HtmlWebpackPlugin_1-0": 251
+        },
+        "bySource": {
+          "0 HtmlWebpackPlugin_0-0": 563,
+          "0 HtmlWebpackPlugin_1-0": 251
+        },
+        "usedIds": [
+          251,
+          563
+        ]
+      },
+      "modules": {
+        "byIdentifier": {
+          "./node_modules/html-webpack-plugin/lib/loader.js!./index.html": 614,
+          "./node_modules/html-webpack-plugin/lib/loader.js!./micro.html": 783,
+          "javascript/esm|data:text/javascript,__webpack_public_path__ = __webpack_base_uri__ = htmlWebpackPluginPublicPath;": 163
+        },
+        "usedIds": [
+          163,
+          614,
+          783
+        ]
+      }
+    }
+  ],
+  "chunks": {
+    "byName": {
+      "aaa": 139,
+      "bbb": 892,
+      "index": 826,
+      "runtime-111": 706
+    },
+    "bySource": {
+      "0 aaa": 139,
+      "0 bbb": 892,
+      "0 index": 706,
+      "1 index": 826
+    },
+    "usedIds": [
+      139,
+      706,
+      826,
+      892
+    ]
+  },
+  "modules": {
+    "byIdentifier": {
+      "./node_modules/babel-loader/lib/index.js??ruleSet[1].rules[0]!./src/a.js|882b1abe4ca9050da0c1ebef5e844526": 498,
+      "./node_modules/babel-loader/lib/index.js??ruleSet[1].rules[0]!./src/b.js": 541,
+      "./node_modules/babel-loader/lib/index.js??ruleSet[1].rules[0]!./src/index.js|73518b6aaf764d6c80dd8d8ba8b0d52c": 526
+    },
+    "usedIds": [
+      498,
+      526,
+      541
+    ]
+  }
+}

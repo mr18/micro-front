@@ -1,4 +1,4 @@
-import { Application } from "../../micro-front/lib/index.esm";
+import { Application } from '../../lib/index.esm';
 // const App = new Application({
 //   name: "aap1",
 //   url: "http://localhost:9990/bbb.html",
@@ -6,9 +6,9 @@ import { Application } from "../../micro-front/lib/index.esm";
 // });
 
 const App = new Application({
-  name: "aap1",
-  url: "http://localhost:9990/aaa.html",
-  container: "#micro",
+  name: 'aap1',
+  url: 'http://localhost:9990/aaa.html',
+  container: '#micro',
 });
 
 // const App = new Application({

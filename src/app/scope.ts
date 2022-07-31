@@ -111,14 +111,14 @@ export class Scope extends SandboxNode implements ScopeInterface {
   execScriptUseStrict(queue: ScriptSourceType[]) {
     const scriptInfo = queue.shift();
     if (!scriptInfo) return;
-    let code = `"use strict";(function f(window,self,global){;${scriptInfo.code};\n}).bind(this,this,this,this)();`;
+    let code = `"use strict";(function f(window,self,global){;${scriptInfo.code};\n}).call(this,this,this,this);`;
     if (scriptInfo.fileName) {
       code += `\n//# sourceMappingURL=${scriptInfo.fileName}.map`;
     }
     const fn = new Function(code);
 
-    const win = this.currentWindow;
-    fn.call(win);
+    // console.log(fn.toString());
+    fn.call(this.currentWindow);
 
     while (queue.length) {
       this.execScriptUseStrict(queue);

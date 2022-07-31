@@ -32,7 +32,6 @@ export class Application {
     // 继承window中的实例&属性
     if (window[FrameName]) {
       this.manager = window[FrameName];
-      console.log(this.manager);
     } else {
       this.manager = new FrameWork();
       defineFreezeProperty(window, FrameName, this.manager);
