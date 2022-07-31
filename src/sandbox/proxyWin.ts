@@ -42,7 +42,7 @@ export default function proxyWin() {
       return getter;
     },
   });
-
+  console.log(1);
   if (!objectHasProperty(newObj, 'currentWindow')) {
     defineFreezeProperty(newObj, 'currentWindow', newObj);
   }

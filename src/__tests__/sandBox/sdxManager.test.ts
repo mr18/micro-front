@@ -27,7 +27,7 @@ describe('sandbox manager', () => {
     expect(manager.findNode('c')).toBe(nodec);
 
     expect(() => manager.provide('2', { keepalive: false, parent: node })).toThrow();
-    expect(() => manager.provide('2')).toThrow();
+    expect(() => manager.provide('2', {})).toThrow();
 
     // // 失效，不保持状态，需要删除
     manager.inactive('2');

@@ -66,6 +66,7 @@ export class Sandbox implements SandboxInterface {
           } else {
             originGetter = Reflect.get(sandbox.parentSandbox.currentWindow, key);
           }
+          console.log(key, originGetter);
           return originGetter;
         }
       },

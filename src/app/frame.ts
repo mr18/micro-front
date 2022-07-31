@@ -1,19 +1,19 @@
+import { GlobalProxy } from 'sandbox';
 import { getSandBoxInstanceFnName } from 'src/sandbox/sandbox';
 import { SandboxNode } from 'src/sandbox/sandboxNode';
 import { SandboxTree } from 'src/sandbox/sandboxTree';
 import { SandboxManager } from '../sandbox/manager';
 import { Scope, ScopeOptions } from './scope';
 
-export type provideOptions = { parent?: Scope } & ScopeOptions;
+export type ProvideOptions = { parent?: Scope; window?: GlobalProxy } & ScopeOptions;
 export class FrameWork extends SandboxManager<Scope, SandboxTree<SandboxNode>> {
-  provide(name: string, options?: provideOptions) {
-    options = options || {};
+  provide(name: string, options: ProvideOptions) {
     // name 不能重复
     if (this.nodeNameList.get(name)) {
       throw new Error(`can not provide same sandbox named:${name}.`);
     }
-    const getSandBoxInstance = (self as any)[getSandBoxInstanceFnName] || (window as any)[getSandBoxInstanceFnName];
-    if (getSandBoxInstance && typeof getSandBoxInstance === 'function') {
+    const getSandBoxInstance = options.window && options.window[getSandBoxInstanceFnName];
+    if (typeof getSandBoxInstance === 'function') {
       const parent = getSandBoxInstance();
       if (parent instanceof Scope) {
         options.parent = parent;

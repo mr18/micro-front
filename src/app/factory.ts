@@ -1,6 +1,6 @@
 import { parseHtmlSource, parseLocationUrl } from 'src/utils/parse';
 import { defineFreezeProperty } from 'src/utils/utils';
-import { FrameWork, provideOptions } from './frame';
+import { FrameWork, ProvideOptions } from './frame';
 import { fetchSource } from './patch';
 import { Scope, ScriptSourceType, StyleSourceType } from './scope';
 
@@ -10,7 +10,7 @@ export type AppOptions = {
   name: string;
   url: string;
   container: string | Element;
-} & provideOptions;
+} & ProvideOptions;
 
 export type HtmlSourceType = {
   scripts: Map<string, ScriptSourceType>;
@@ -28,9 +28,11 @@ export class Application {
   constructor(options: AppOptions) {
     this.options = options;
     this.name = options.name;
+    console.log(options);
     // 继承window中的实例&属性
     if (window[FrameName]) {
       this.manager = window[FrameName];
+      console.log(this.manager);
     } else {
       this.manager = new FrameWork();
       defineFreezeProperty(window, FrameName, this.manager);
@@ -43,11 +45,15 @@ export class Application {
     }
     if (typeof this.options.container === 'string') {
       this.container = document.body.querySelector(this.options.container);
+    } else {
+      this.container = this.options.container;
     }
+
     this.scope = this.manager.provide(this.name, this.options);
     // defineSciprtElement(this.scope);
     // defineLinkElement(this.scope);
     // rewriteCreateElement(this.scope);
+    window.addEventListener('init', () => {});
   }
 
   async run() {
@@ -61,7 +67,9 @@ export class Application {
     this.container.appendChild(source.oBodyWrap);
 
     this.addSourceTask(source);
-    this.scope.resolveScource();
+    await this.scope.resolveScource();
+    return Promise.resolve();
+    // document.dispatchEvent(new CustomEvent('DOMContentLoaded'));
   }
   private addSourceTask(source: HtmlSourceType) {
     for (const [src, info] of source.scripts) {
