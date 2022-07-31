@@ -11,18 +11,18 @@ export const getSandBoxInstanceFnName = `__GET_SANDBOX_INSTANCE__`;
 
 // export const sleepSandboxMap = new Map<Sandbox,>()
 export class Sandbox implements SandboxInterface {
-  SHARE_DATA_KEYS: Array<string> = []; // 共享键名
+  shareVars: Array<string> = []; // 共享键名
   sandboxId: number;
   parentSandbox: GlobalProxyType; // 当前 Sandbox 父集
-  currentWindow: GlobalProxy = {}; // 所有取值复制操作都在currentWindow上进行
+  currentWindow: GlobalProxy; // 所有取值复制操作都在currentWindow上进行
   active: boolean;
   constructor(sandbox?: Sandbox | undefined, shareDataKeys?: Array<string>) {
-    this.SHARE_DATA_KEYS = shareDataKeys || [];
+    this.shareVars = shareDataKeys || [];
     this.sandboxId = ++uuid;
     if (sandbox instanceof Sandbox) {
-      this.parentSandbox = sandbox as any as GlobalProxyType;
+      this.parentSandbox = sandbox as unknown as GlobalProxyType;
     } else {
-      this.parentSandbox = proxyWin() as unknown as GlobalProxyType;
+      this.parentSandbox = proxyWin() as GlobalProxyType;
     }
     this.setup();
   }
@@ -107,7 +107,7 @@ export class Sandbox implements SandboxInterface {
     throw new Error('Method not implemented.');
   }
   isShareKey(target: Sandbox, key: unknown) {
-    return target.SHARE_DATA_KEYS.includes(key as string);
+    return target.shareVars.includes(key as string);
   }
 
   sleep() {

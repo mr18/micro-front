@@ -1,6 +1,5 @@
 declare module 'sandbox' {
   type GlobalProxyType = Window & {
-    isDecleared: (key: PropertyKey) => boolean;
     currentWindow: GlobalProxyType;
     parentSandbox?: GlobalProxyType;
   };
