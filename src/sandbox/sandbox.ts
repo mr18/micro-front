@@ -66,7 +66,6 @@ export class Sandbox implements SandboxInterface {
           } else {
             originGetter = Reflect.get(sandbox.parentSandbox.currentWindow, key);
           }
-          console.log(key, originGetter);
           return originGetter;
         }
       },
@@ -85,7 +84,7 @@ export class Sandbox implements SandboxInterface {
           Reflect.set(target, key, value);
         }
         declaredMap.set(key, value);
-        console.log(key);
+
         return true;
       },
       defineProperty: (target: GlobalProxy, key: PropertyKey, value: PropertyDescriptor) => {
@@ -98,6 +97,11 @@ export class Sandbox implements SandboxInterface {
         declaredMap.delete(key);
         return true;
       },
+      // defineProperty: (target: GlobalProxy, key: PropertyKey, value: unknown) => {
+      //   Reflect.set(target, key, value);
+      //   declaredMap.set(key, value);
+      //   return true;
+      // },
     });
     return {
       proxy,

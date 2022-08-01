@@ -1,5 +1,5 @@
 import { defineLinkElement, defineSciprtElement } from 'src/component';
-import { Application } from './factory';
+import { Application } from './app';
 import { Scope } from './scope';
 
 const originCreateElement = document.createElement;

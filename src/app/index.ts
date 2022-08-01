@@ -1,2 +1,3 @@
-export { Application } from './factory';
+export { Application } from './app';
 export { FrameWork } from './frame';
+

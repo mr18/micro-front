@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { Application } from 'src/app';
+import { Scope, StyleSourceType } from 'src/app/scope';
 import Logger from '../utils/logger';
 const MicroLinkName = 'micro-link';
-export const defineLinkElement = (scope, options) => {
+export const defineLinkElement = (scope: Scope, instance: Application) => {
   const win = scope.node.currentWindow;
   class LinkElement extends HTMLLinkElement {
     href: string;
@@ -20,8 +22,14 @@ export const defineLinkElement = (scope, options) => {
 
     // 当 custom element 首次被插入文档 DOM 时，被调用。
     connectedCallback() {
-      scope.addStyle(this.href, 'style');
-      this.remove();
+      const oStyle = document.createElement('style');
+      const scriptInfo: StyleSourceType = {
+        url: instance.resolvePath(this.href),
+        ele: oStyle,
+      };
+      scope.addStyle(this.href, scriptInfo);
+      this.replaceWith(oStyle);
+      // this.remove();
       Logger.log('link插入');
     }
     // 当 custom element 从文档 DOM 中删除时，被调用。

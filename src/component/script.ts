@@ -12,7 +12,7 @@ export const defineSciprtElement = (scope: Scope, instance: Application) => {
       super();
       Object.defineProperty(this, 'src', {
         get() {
-          return;
+          return '';
         },
         set: (value: string) => {
           this.url = value;

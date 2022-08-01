@@ -31,12 +31,15 @@ import { defineFreezeProperty, objectHasProperty } from '../../src/utils/utils';
 //   return newObj;
 // }
 
+// 绑定 this 后，出现报错
+const BINDBLACKLIST = ['Symbol'];
 export default function proxyWin() {
   const windowObj = window;
   const newObj = new Proxy(windowObj, {
     get(target: object, key: PropertyKey) {
       let getter = Reflect.get(target, key);
-      if (typeof getter === 'function') {
+      // window 下的全局变量 this 绑定为 window
+      if (typeof getter === 'function' && BINDBLACKLIST.indexOf(getter.name) < 0) {
         getter = getter.bind(target);
       }
       return getter;

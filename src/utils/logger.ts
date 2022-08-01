@@ -5,8 +5,8 @@ export const LogLevel = {
   error: 3,
 };
 
-const Logger = {
-  level: 0,
+const Logger = console || {
+  level: 1,
   warn: (...arg: any) => {
     if ((Logger as any).level >= LogLevel.warn) {
       console.warn(...arg);
@@ -14,9 +14,9 @@ const Logger = {
   },
   log: (...arg: any) => {
     if ((Logger as any).level >= LogLevel.log) {
-      // console.log(stack);
+      console.log(...arg);
       // console.log(typeof new Error().stack);
-      console.trace(...arg);
+      // console.trace(...arg);
     }
   },
   error: (...arg: any) => {
@@ -29,4 +29,4 @@ const Logger = {
 
 // export default process.env.NODE_ENV === 'development' ? Logger : console;
 
-export default console;
+export default Logger;

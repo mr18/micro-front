@@ -21,7 +21,7 @@ export class FrameWork extends SandboxManager<Scope, SandboxTree<SandboxNode>> {
         options.parent = undefined;
       }
     } else {
-      options.parent == undefined;
+      options.parent = undefined;
     }
     const scope = new Scope(name, options);
     let tree;

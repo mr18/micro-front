@@ -1,3 +1,63 @@
+export const parseLocationUrl = (url: string) => {
+  let hash: string, // #xxx
+    // host: string, // "localhost:9000"
+    // hostname: string, // : "localhost"
+    href: string = url, // : "http://localhost:9000/"
+    // origin: string, // : "http://localhost:9000"
+    // pathname: string, // : "/"
+    // port: string, // : "9000"
+    search: string, // '?xxx'
+    protocol: string, // : "http:"
+    str: string;
+
+  const reg = /(http(s?):)?\/\/([^/:]+):?(\d*)(\/?.*)/i;
+
+  [str, hash] = url.split('#') || [];
+  [str, search] = str.split('?') || [];
+
+  const res = reg.exec(str) || [];
+
+  protocol = res[1];
+  if (!protocol) {
+    protocol = location.protocol;
+    href = protocol + url;
+  }
+  const hostname = res[3];
+  const port = res[4];
+  const pathname = res[5];
+
+  const host = hostname + (port ? ':' + port : '');
+  const origin = protocol + '//' + host;
+
+  return {
+    hash: hash ? '#' + hash : hash,
+    host,
+    hostname,
+    href,
+    origin,
+    pathname,
+    port,
+    search: search ? '?' + search : search,
+    protocol: protocol || location.protocol,
+  };
+};
+
+export const resolvePath = (loc: Record<PropertyKey, any>, url: string) => {
+  if (/\/\//.test(url)) {
+    return location.protocol + url;
+  } else if (/\.\/+/.test(url)) {
+    return loc.origin + loc.pathname.replace(/\/([^/]*\.[^/]*)?$/, '') + url.replace(/\.\/+/, '/');
+  } else if (/\/[^/]+/.test(url)) {
+    return loc.origin + url;
+  }
+  return url;
+};
+export const parseFileName = (path: string) => {
+  if (/[^.]+\.[^./]+$/.test(path)) {
+    const file = path.split('/');
+    return (file[file.length - 1] || '').trim();
+  }
+};
 export const parseHtmlSource = (html: string, _location: Record<PropertyKey, any>) => {
   const scripts = new Map<string, any>();
   const styles = new Map<string, any>();
@@ -9,21 +69,54 @@ export const parseHtmlSource = (html: string, _location: Record<PropertyKey, any
   const oBodyWrap: HTMLElement = document.createElement('div');
   oBodyWrap.innerHTML = bodyHtml;
 
-  oHeadWrap.childNodes.forEach((ele: HTMLElement) => {
-    pickSource(ele, oHeadWrap);
-  });
-
-  oBodyWrap.childNodes.forEach((ele: HTMLElement) => {
-    pickSource(ele, oBodyWrap);
-  });
-
+  function pickSourceInfo(src: string, ele: HTMLElement, type: string, replaceEle?: HTMLElement) {
+    if (type === 'script') {
+      if (src) {
+        const module = ele.getAttribute('module') !== null;
+        const async = ele.getAttribute('async') !== null;
+        scripts.set(src, {
+          url: resolvePath(_location, src),
+          async,
+          defer: !async,
+          module,
+          nomodule: !module,
+          fileName: parseFileName(src),
+          ele,
+        });
+      } else {
+        const contentUri = ele.textContent.replace(/[\n\t\s]+/, '').substring(0, 50) + '...';
+        scripts.set(contentUri, {
+          url: contentUri,
+          defer: true,
+          // fileName: parseFileName(src),
+          result: ele.textContent,
+          ele,
+        });
+      }
+    } else if (type === 'link') {
+      const rel = ele.getAttribute('rel');
+      if (rel === 'stylesheet') {
+        styles.set(src, {
+          url: resolvePath(_location, src),
+          fileName: parseFileName(src),
+          ele: replaceEle,
+        });
+      }
+      // 预加载js
+      else if (rel === 'prefetch') {
+        scripts.set(src, {
+          url: resolvePath(_location, src),
+        });
+      }
+    }
+  }
   function pickSource(ele: HTMLElement, parent: HTMLElement) {
     if (ele.childNodes && ele.childNodes.length > 0) {
       ele.childNodes.forEach((e: HTMLElement) => {
         pickSource(e, ele);
       });
     }
-    if (ele.nodeType == 1) {
+    if (ele.nodeType === 1) {
       const tagName = ele.tagName.toLowerCase();
       // 收集script资源
       if (tagName === 'script') {
@@ -52,90 +145,18 @@ export const parseHtmlSource = (html: string, _location: Record<PropertyKey, any
     }
   }
 
-  function pickSourceInfo(src: string, ele: HTMLElement, type: string, replaceEle?: HTMLElement) {
-    if (type === 'script') {
-      scripts.set(src, {
-        url: resolvePath(_location, src),
-        async: ele.getAttribute('async') !== null,
-        defer: ele.getAttribute('defer') !== null,
-        module: ele.getAttribute('module') !== null,
-        nomodule: ele.getAttribute('nomodule') !== null,
-        fileName: parseFileName(src),
-        ele: ele,
-      });
-    } else if (type === 'link') {
-      styles.set(src, {
-        url: resolvePath(_location, src),
-        fileName: parseFileName(src),
-        ele: replaceEle,
-      });
-    }
-  }
+  oHeadWrap.childNodes.forEach((ele: HTMLElement) => {
+    pickSource(ele, oHeadWrap);
+  });
+
+  oBodyWrap.childNodes.forEach((ele: HTMLElement) => {
+    pickSource(ele, oBodyWrap);
+  });
+
   return {
     scripts,
     styles,
     oHeadWrap,
     oBodyWrap,
   };
-};
-
-export const parseLocationUrl = (url: string) => {
-  let hash: string, //#xxx
-    host: string, // "localhost:9000"
-    hostname: string, //: "localhost"
-    href: string = url, //: "http://localhost:9000/"
-    origin: string, //: "http://localhost:9000"
-    pathname: string, //: "/"
-    port: string, //: "9000"
-    search: string, // '?xxx'
-    protocol: string, //: "http:"
-    str: string;
-
-  const reg = /(http(s?):)?\/\/([^\/:]+):?(\d*)(\/?.*)/i;
-
-  [str, hash] = url.split('#') || [];
-  [str, search] = str.split('?') || [];
-
-  const res = reg.exec(str) || [];
-
-  protocol = res[1];
-  if (!protocol) {
-    protocol = location.protocol;
-    href = protocol + url;
-  }
-  hostname = res[3];
-  port = res[4];
-  pathname = res[5];
-
-  host = hostname + (port ? ':' + port : '');
-  origin = protocol + '//' + host;
-
-  return {
-    hash: hash ? '#' + hash : hash,
-    host,
-    hostname,
-    href,
-    origin,
-    pathname,
-    port,
-    search: search ? '?' + search : search,
-    protocol: protocol || location.protocol,
-  };
-};
-
-export const resolvePath = (loc: Record<PropertyKey, any>, url: string) => {
-  if (/\/\//.test(url)) {
-    return location.protocol + url;
-  } else if (/\.\/+/.test(url)) {
-    return loc.origin + loc.pathname.replace(/\/([^\/]*\.[^\/]*)?$/, '') + url.replace(/\.\/+/, '/');
-  } else if (/\/[^\/]+/.test(url)) {
-    return loc.origin + url;
-  }
-  return url;
-};
-export const parseFileName = (path: string) => {
-  if (/[^\.]+\.[^\.\/]+$/.test(path)) {
-    const file = path.split('/');
-    return (file[file.length - 1] || '').trim();
-  }
 };
