@@ -20,5 +20,5 @@ logs
 # eslint
 .eslintcache
 # files
-yarn.lock
-package.lock.json
+*.lock
+*.lock.json
