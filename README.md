@@ -1,2 +1,5 @@
 # micro-front
-micro-front
+
+微前端框架，完善中。
+
+1. 初步具备多应用加载能力
