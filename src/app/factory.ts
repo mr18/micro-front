@@ -50,7 +50,7 @@ export class Application {
     }
 
     this.scope = this.manager.provide(this.name, this.options);
-    rewriteCreateElement(this.scope, this);
+    rewriteCreateElement(this.scope, this as any);
   }
 
   async run() {
