@@ -46,7 +46,7 @@ class MicroElement extends HTMLElement {
   private humpCase(key: string) {
     const re = /([A-Z])([a-z0-9]+)/g;
     if (re.test(key)) {
-      return key.replace(re, ($1, $2, $3) => {
+      return key.replace(re, (_$1, $2, $3) => {
         return '-' + $2.toLowerCase() + $3;
       });
     }
@@ -54,7 +54,7 @@ class MicroElement extends HTMLElement {
   // 当 custom element 首次被插入文档 DOM 时，被调用。
   connectedCallback() {
     const options = this.getOptions();
-    this.setAttribute('id', getContainerSelector(options.name));
+    this.setAttribute('id', getContainerSelector(options.name || ''));
     const app = new Application(options);
     this.instance = app;
     app.run();

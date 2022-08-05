@@ -1,10 +1,10 @@
-import { AppOptions, ManagerInterface } from 'sandbox';
+import { ManagerInterface, ScopeOptions } from 'sandbox';
 import { Application } from './app';
 import { Scope } from './scope';
 
 export class FrameWork implements ManagerInterface<Application> {
   nodeNameList = new Map<string, Application>();
-  provide(instance: Application, options: AppOptions) {
+  provide(instance: Application, options: ScopeOptions): Scope {
     // name 不能重复
     if (this.nodeNameList.get(instance.name) !== undefined) {
       throw new Error(`can not provide same sandbox named:${instance.name}.`);
