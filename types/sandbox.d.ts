@@ -15,21 +15,52 @@ declare module 'sandbox' {
     destory(): void;
     sleep(): void;
   }
-  interface SandboxTreeInterface<N> {
-    root: N | null;
-    attach(node: N, parent?: N): N;
-    find(node: N): void;
-    remove(node: N): void;
-  }
-  interface SandboxManagerInterface<N, T> {
-    treeContainer: Set<T>;
-    currentTree: T;
-    nodeTreeList: WeakMap<N, T>;
+  interface ManagerInterface<N> {
     nodeNameList: Map<string, N>;
-    findNode(node: string | N): void;
-    findTreeByNode(node: string | N);
     // provide(name: string, options): N;
     // active(node: string | N): void;
     // inactive(node: string | N): void;
   }
+
+  type SourceType = {
+    [key: string]: any;
+    url: string;
+    promise?: Promise<any>;
+    result?: string | undefined;
+    type?: string;
+  };
+
+  type StyleSourceType = {
+    ele?: HTMLElement;
+    fileName?: string;
+  } & SourceType;
+  type ScriptSourceType = {
+    defer?: boolean;
+    async?: boolean;
+    module?: boolean;
+    nomodule?: boolean;
+    onload?: (e: any) => void;
+    onerror?: (e: any) => void;
+  } & StyleSourceType;
+
+  type NodeTypeOptions = {
+    shareScope?: Array<string>;
+  };
+  type ScopeOptions = {
+    keepalive?: boolean;
+  } & NodeTypeOptions;
+
+  type AppOptions = {
+    name?: string;
+    url: string;
+    keepalive?: boolean;
+    container: string | Element;
+  } & ScopeOptions;
+
+  type HtmlSourceType = {
+    sources: Map<string, StyleSourceType | ScriptSourceType>;
+    fragment: {
+      [key: string]: HTMLElement;
+    };
+  };
 }

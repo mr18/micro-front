@@ -19,6 +19,7 @@ module.exports = {
   rootDir: __dirname,
   modulePaths: ['<rootDir>/'],
   testMatch: ['**/__tests__/**/*.test.[jt]s?(x)'],
+  // testMatch: ['**/__tests__/**/css.test.[jt]s?(x)'],
   coverageThreshold: {
     global: {
       // branches: 100,

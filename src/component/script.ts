@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { ScriptSourceType } from 'sandbox';
 import { Application } from 'src/app';
-import { Scope, ScriptSourceType } from 'src/app/scope';
-import Logger from '../utils/logger';
+import { Scope } from 'src/app/scope';
 
 const MicroScriptName = 'micro-script';
 export const defineSciprtElement = (scope: Scope, instance: Application) => {
-  const win = scope.node.currentWindow;
+  const win = scope.currentWindow;
   class ScriptElement extends HTMLScriptElement {
     url: string;
     constructor() {
@@ -34,20 +34,6 @@ export const defineSciprtElement = (scope: Scope, instance: Application) => {
         onerror: this.onerror && this.onerror.bind(null),
       };
       scope.addScript(this.url, scriptInfo, true);
-      Logger.log('script插入');
-      // this.remove();
-    }
-    // 当 custom element 从文档 DOM 中删除时，被调用。
-    disconnectedCallback() {
-      Logger.log('script删除', this);
-    }
-    // 当 custom element 被移动到新的文档时，被调用。
-    adoptedCallback() {
-      Logger.log('script移动');
-    }
-    // 当 custom element 增加、删除、修改自身属性时，被调用。
-    attributeChangedCallback() {
-      Logger.log('script修改属性');
     }
   }
   if (!win.customElements.get(MicroScriptName)) {

@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { StyleSourceType } from 'sandbox';
 import { Application } from 'src/app';
-import { Scope, StyleSourceType } from 'src/app/scope';
-import Logger from '../utils/logger';
+import { Scope } from 'src/app/scope';
 const MicroLinkName = 'micro-link';
 export const defineLinkElement = (scope: Scope, instance: Application) => {
-  const win = scope.node.currentWindow;
+  const win = scope.currentWindow;
   class LinkElement extends HTMLLinkElement {
     href: string;
     constructor() {
@@ -30,19 +30,6 @@ export const defineLinkElement = (scope: Scope, instance: Application) => {
       scope.addStyle(this.href, scriptInfo);
       this.replaceWith(oStyle);
       // this.remove();
-      Logger.log('link插入');
-    }
-    // 当 custom element 从文档 DOM 中删除时，被调用。
-    disconnectedCallback() {
-      Logger.log('link删除');
-    }
-    // 当 custom element 被移动到新的文档时，被调用。
-    adoptedCallback() {
-      Logger.log('link移动');
-    }
-    // 当 custom element 增加、删除、修改自身属性时，被调用。
-    attributeChangedCallback() {
-      Logger.log('link修改属性');
     }
   }
   if (!win.customElements.get(MicroLinkName)) {

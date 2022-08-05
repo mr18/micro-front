@@ -1,31 +1,30 @@
-import { parseHtmlSource, parseLocationUrl, resolvePath } from 'src/utils/parse';
+import { AppOptions, HtmlSourceType } from 'sandbox';
+import { pickSourceFromHtml } from 'src/parser/html';
+import Logger from 'src/utils/logger';
+import { getContainerSelector, parseLocationUrl, resolvePath } from 'src/utils/path';
 import { defineFreezeProperty } from 'src/utils/utils';
-import { FrameWork, ProvideOptions } from './frame';
+import { FrameWork } from './frame';
 import { rewriteCreateElement } from './inject';
 import { fetchSource } from './patch';
-import { Scope, ScriptSourceType, StyleSourceType } from './scope';
+import { Scope } from './scope';
 
 export const FrameName = '__MICRO_FRAME_WORK__';
-export type AppOptions = {
-  name: string;
-  url: string;
-  container: string | Element;
-} & ProvideOptions;
 
-export type HtmlSourceType = {
-  scripts: Map<string, ScriptSourceType>;
-  styles: Map<string, StyleSourceType>;
-  oHeadWrap: HTMLElement;
-  oBodyWrap: HTMLElement;
-};
+let uuid = 0;
 export class Application {
   name: string;
   manager: FrameWork;
   scope: Scope;
   options: AppOptions;
   container: Element;
-  _location: Record<PropertyKey, any>;
+  fragment: { [key: string]: HTMLElement };
+  location: Record<PropertyKey, any>;
+  keepalive = false;
+  cssSelectorScope: string;
+  uuid = 0;
   constructor(options: AppOptions) {
+    this.uuid = ++uuid;
+    options.name = options.name ? options.name : this.uuid + '';
     this.options = options;
     this.name = options.name;
     // 继承window中的实例&属性
@@ -42,24 +41,40 @@ export class Application {
       throw new Error('options.container must be string | Element');
     }
     if (typeof this.options.container === 'string') {
-      this.container = document.body.querySelector(this.options.container);
+      const container = document.body.querySelector(this.options.container);
+      if (container) {
+        this.container = container;
+      } else {
+        throw new Error(`can not find ${this.options.container} dom`);
+      }
     } else {
       this.container = this.options.container;
     }
-
-    this.scope = this.manager.provide(this.name, this.options);
+    let cssSelectorScope = this.container.getAttribute('id');
+    if (!cssSelectorScope) {
+      cssSelectorScope = getContainerSelector(this.name);
+      this.container.setAttribute('id', cssSelectorScope);
+    }
+    this.cssSelectorScope = `#${cssSelectorScope}`;
+    this.scope = this.manager.provide(this, this.options);
+    this.scope.appInstance = this;
     rewriteCreateElement(this.scope, this);
+
+    Logger.log('APP instance is initialized');
   }
 
   async run() {
-    this._location = parseLocationUrl(this.options.url);
+    this.location = parseLocationUrl(this.options.url);
 
-    const html = (await fetchSource(this._location.href)) as string;
+    const html = (await fetchSource(this.location.href)) as string;
 
-    const source: HtmlSourceType = parseHtmlSource(html, this._location);
+    const source: HtmlSourceType = pickSourceFromHtml(html, this.location);
 
-    // this.container.appendChild(source.oHeadWrap);
-    this.container.appendChild(source.oBodyWrap);
+    this.fragment = source.fragment;
+    this.container.appendChild(source.fragment.head);
+    this.container.appendChild(source.fragment.body);
+
+    Logger.log('html sources is load compeleted');
 
     this.addSourceTask(source);
     await this.scope.resolveScource();
@@ -67,15 +82,44 @@ export class Application {
     return Promise.resolve(console.log(`APP: ${this.name} launch completed!`));
     // document.dispatchEvent(new CustomEvent('DOMContentLoaded'));
   }
-  private addSourceTask(source: HtmlSourceType) {
-    for (const [src, info] of source.scripts) {
-      this.scope.addScript(src, info, false);
+  async refresh(options: AppOptions) {
+    if (this.options.url !== options.url) {
+      this.options.url = options.url;
+      this.location = parseLocationUrl(this.options.url);
+
+      const html = (await fetchSource(this.location.href)) as string;
+
+      const source: HtmlSourceType = pickSourceFromHtml(html, this.location);
+
+      // this.fragment.head.replaceWith(source.fragment.head);
+      // this.fragment.body.replaceWith(source.fragment.body);
+
+      this.fragment = source.fragment;
+      this.scope.resetSourceTask();
+      this.addSourceTask(source);
+      await this.scope.resolveScource();
+
+      return Promise.resolve(console.log(`APP: ${this.name} is refreshed!`));
+      // document.dispatchEvent(new CustomEvent('DOMContentLoaded'));
     }
-    for (const [src, info] of source.styles) {
-      this.scope.addStyle(src, info);
+  }
+  inactive() {
+    // TODO:移除监听事件，释放内存空间
+  }
+  // keepalive===true
+  active() {
+    // TODO 重新绑定事件，复用资源
+  }
+  addSourceTask(source: HtmlSourceType) {
+    for (const [src, info] of source.sources) {
+      if (info.type === 'script') {
+        this.scope.addScript(src, info, false);
+      } else if (info.type === 'style') {
+        this.scope.addStyle(src, info);
+      }
     }
   }
   resolvePath(src: string) {
-    return resolvePath(this._location, src);
+    return resolvePath(this.location, src);
   }
 }

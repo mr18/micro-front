@@ -11,7 +11,7 @@ describe('sandbox property', () => {
   test('sanbox can read global vars, but cant not effect parent sandbox or global vars', async () => {
     global.key = 'key';
     const SDboxPoxySp = new Sandbox();
-    const SDboxPoxySp1 = new Sandbox(SDboxPoxySp); // 继承SDboxPoxySp模式
+    const SDboxPoxySp1 = new Sandbox(); // 继承SDboxPoxySp模式
     const SDboxPoxy1 = new Sandbox();
 
     expect(SDboxPoxySp.currentWindow.key).toBe(global.key);
@@ -39,7 +39,7 @@ describe('sandbox property', () => {
 
   test('global vars is share in all sanboxs', async () => {
     const SDboxPoxySp = new Sandbox();
-    const SDboxPoxySp1 = new Sandbox(SDboxPoxySp); // 继承SDboxPoxySp模式
+    const SDboxPoxySp1 = new Sandbox([]); // 继承SDboxPoxySp模式
     const SDboxPoxy1 = new Sandbox();
 
     const location = global.location;
@@ -62,13 +62,13 @@ describe('sandbox property', () => {
     const shareKeys = ['share', 'vars'];
     const subSahreKeys = ['share', 'vars', 'subkeys'];
 
-    const SDboxPoxySp = new Sandbox(undefined, shareKeys);
-    const SDboxPoxySp1 = new Sandbox(SDboxPoxySp, shareKeys);
-    const SDboxPoxySp2 = new Sandbox(SDboxPoxySp1, subSahreKeys);
+    const SDboxPoxySp = new Sandbox(shareKeys);
+    const SDboxPoxySp1 = new Sandbox(shareKeys);
+    const SDboxPoxySp2 = new Sandbox(subSahreKeys);
 
     const SDboxPoxy = new Sandbox();
-    const SDboxPoxy1 = new Sandbox(SDboxPoxy, shareKeys);
-    const SDboxPoxy2 = new Sandbox(SDboxPoxy, subSahreKeys);
+    const SDboxPoxy1 = new Sandbox(shareKeys);
+    const SDboxPoxy2 = new Sandbox(subSahreKeys);
 
     global.share = Object.create({ a: 1 });
 

@@ -1,7 +1,10 @@
+import { SourceType } from 'sandbox';
+
 export const fetchSource = (url: string, options?: object) => {
   return new Promise((resolve, reject) => {
     try {
-      fetch(url, options)
+      global
+        .fetch(url, options)
         .then((res) => {
           if (res.status >= 200 && res.status < 400) {
             if (res.status === 302) {
@@ -12,16 +15,13 @@ export const fetchSource = (url: string, options?: object) => {
             }
           } else {
             reject(res);
-            // console.error(res);
           }
         })
         .catch((e) => {
           reject(e);
-          // console.error(e);
         });
     } catch (e) {
       reject(e);
-      // console.error(e);
     }
   });
 };
@@ -40,10 +40,10 @@ export const scheduleTask = (fn: () => void) => {
   }
 };
 // 异步任务以同步的方式执行
-export const scheduleAsyncAsSync = async <T, R>(options: {
+export const scheduleAsyncAsSync = async <T extends SourceType>(options: {
   iterator: IterableIterator<T> | T[] | Set<T>;
-  beforeResolve?: (task: T, res: R) => void;
-  afterResolve?: (task: T, res: R) => void;
+  beforeResolve?: (task: T, res: string) => void;
+  afterResolve?: (task: T, res: string) => void;
 }): Promise<T[]> => {
   return new Promise((resolve: (t: T[]) => void, reject: (e: Error) => void) => {
     let iterator = options.iterator;
@@ -51,7 +51,7 @@ export const scheduleAsyncAsSync = async <T, R>(options: {
       iterator = iterator[Symbol.iterator]();
     }
     const queue: T[] = [];
-    let prev: R;
+    let prev: string;
     const runTask = async (iterator: IterableIterator<T>) => {
       const task = iterator.next();
       // 任务结束
@@ -61,7 +61,7 @@ export const scheduleAsyncAsSync = async <T, R>(options: {
         try {
           options.beforeResolve && options.beforeResolve(task.value, prev);
           // 每次任务执行之前的回调
-          const result: R = await task.value.promise;
+          const result: string = await task.value.promise;
           // 每次任务执行完后的回调
           options.afterResolve && options.afterResolve(task.value, result);
           task.value.result = result;
@@ -83,11 +83,11 @@ export const scheduleAsyncAsSync = async <T, R>(options: {
   });
 };
 // 并行执行异步任务
-export const scheduleAsyncAsParallel = async <T, R>(options: {
+export const scheduleAsyncAsParallel = async <T extends SourceType>(options: {
   iterator: IterableIterator<T> | T[] | Set<T>;
   beforeResolve?: (task: T) => void;
-  afterResolve?: (task: T, res: R) => void;
-  afterReject?: (task: T, res: R) => void;
+  afterResolve?: (task: T, res: string) => void;
+  afterReject?: (task: T, res: string) => void;
 }) => {
   return new Promise((resolve: (t?: any) => void) => {
     let iterator = options.iterator;
@@ -97,17 +97,20 @@ export const scheduleAsyncAsParallel = async <T, R>(options: {
     let task = (iterator as IterableIterator<T>).next();
     while (!task.done) {
       try {
-        task.value.promise.then(
-          ((promise) => {
-            return (result: R) => {
-              // 每次任务执行之前的回调
-              options.beforeResolve && options.beforeResolve(promise);
-              promise.result = result;
-              // 每次任务执行完后的回调
-              options.afterResolve && options.afterResolve(promise, result);
-            };
-          })(task.value),
-        );
+        const promise = task.value.promise;
+        if (promise) {
+          promise.then(
+            ((promise) => {
+              return (result: string) => {
+                // 每次任务执行之前的回调
+                options.beforeResolve && options.beforeResolve(promise);
+                promise.result = result;
+                // 每次任务执行完后的回调
+                options.afterResolve && options.afterResolve(promise, result);
+              };
+            })(task.value),
+          );
+        }
       } catch (e) {
         console.error(e);
         throw e;

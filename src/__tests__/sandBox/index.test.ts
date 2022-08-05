@@ -9,7 +9,7 @@ describe('sandbox property', () => {
   // Sandbox 取值测试
   test('sanbox can read global property, but cant not set global vars', async () => {
     global.key = 'key';
-    const SDboxInstance = new Sandbox(undefined, ['share']);
+    const SDboxInstance = new Sandbox(['share']);
     const SDbox = SDboxInstance.currentWindow as any;
     const location = global.location;
     expect(SDbox.location).toBe(location);
@@ -34,7 +34,7 @@ describe('sandbox property', () => {
 
     global.key11 = 'key11';
     SDboxCk.key2 = 'key2';
-    const SDboxChildInstance = new Sandbox(SDboxInstance, ['share']);
+    const SDboxChildInstance = new Sandbox(['share']);
     const SDboxChild = SDboxChildInstance.currentWindow as any;
 
     // 变量之间无污染
@@ -62,9 +62,9 @@ describe('sandbox property', () => {
     expect(SDbox.share).toBe(global.share);
 
     // snapshot 非快照模式
-    const SDbox2Instance = new Sandbox(undefined, ['share']);
+    const SDbox2Instance = new Sandbox(['share']);
     const SDbox2 = SDbox2Instance.currentWindow as any;
-    const SDbox21 = new Sandbox(SDbox2Instance).currentWindow as any;
+    const SDbox21 = new Sandbox().currentWindow as any;
 
     // 可读取快照之后的变量
     SDbox21.share = 10;
