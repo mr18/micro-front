@@ -1,6 +1,7 @@
 import { defineLinkElement, defineSciprtElement } from '../component';
 import { defineStyleElement } from '../component/style';
 import { Application } from './app';
+import { rewriteAddEventListener, rewriteSetInterval, rewriteSetTimeout } from './patch';
 import { Scope } from './scope';
 
 const originCreateElement = document.createElement;
@@ -21,8 +22,13 @@ export const rewriteCreateElement = (scope: Scope, instance: Application) => {
     }
   };
 };
+export const rewriteEventListener = (scope: Scope) => {
+  rewriteAddEventListener(scope);
+  rewriteSetTimeout(scope);
+  rewriteSetInterval(scope);
+};
 
-export const rewriteDOMOperatorHandler = (scope: Scope) => {
-  const win = scope.currentWindow;
-  win.addEventListener = window.addEventListener;
+export const injectRewrite = (scope: Scope, instance: Application) => {
+  rewriteCreateElement(scope, instance);
+  rewriteEventListener(scope);
 };

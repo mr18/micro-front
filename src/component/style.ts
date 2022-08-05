@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable accessor-pairs */
 import { StyleSourceType } from 'sandbox';
-import { Application } from 'src/app';
-import { Scope } from 'src/app/scope';
-import { cssScope } from 'src/parser/css';
+import { Application } from '../app';
+import { Scope } from '../app/scope';
+import { cssScope } from '../parser/css';
 import Logger from '../utils/logger';
 
 const MicroStyleName = 'micro-style';
@@ -13,12 +14,8 @@ export const defineStyleElement = (scope: Scope, instance: Application) => {
     content: string;
     constructor() {
       super();
-      console.log(1);
       if (this.styleSheet) {
         Object.defineProperty(this.styleSheet, 'cssText', {
-          get() {
-            return '';
-          },
           set: (value: string) => {
             this.content = value;
             return true;

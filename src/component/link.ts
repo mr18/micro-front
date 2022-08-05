@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable accessor-pairs */
 import { StyleSourceType } from 'sandbox';
 import { Application } from '../app';
 import { Scope } from '../app/scope';
@@ -10,9 +11,6 @@ export const defineLinkElement = (scope: Scope, instance: Application) => {
     constructor() {
       super();
       Object.defineProperty(this, 'href', {
-        get() {
-          return '';
-        },
         set: (value: string) => {
           this.href = value;
           return true;

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Application } from 'src/app';
+import { Application } from '../app';
 import Logger from '../utils/logger';
 
 describe('sandbox manager', () => {

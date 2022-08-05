@@ -15,7 +15,6 @@ export class Sandbox implements SandboxInterface {
   sandboxId: number;
   parentSandbox: GlobalProxyType; // 当前 Sandbox 父集
   currentWindow: GlobalProxy = {}; // 所有取值复制操作都在currentWindow上进行
-  active: boolean;
   constructor(shareScope: Array<string> = []) {
     this.shareScope = shareScope || [];
     this.sandboxId = ++uuid;

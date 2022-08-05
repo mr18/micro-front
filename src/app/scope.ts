@@ -3,7 +3,7 @@ import { cssScope } from '../parser/css';
 import { Sandbox } from '../sandbox';
 import Logger from '../utils/logger';
 import { Application } from './app';
-import { fetchSource, scheduleAsyncAsParallel, scheduleAsyncAsSync, scheduleTask } from './patch';
+import { scheduleAsyncAsParallel, scheduleAsyncAsSync, scheduleTask } from './schedule';
 
 export class Scope extends Sandbox implements ScopeInterface {
   scriptsMap = new Map<string, StyleSourceType>();
@@ -14,6 +14,8 @@ export class Scope extends Sandbox implements ScopeInterface {
   styleTask = new Set<StyleSourceType>();
   resolvedMap = new Map<string, any>();
   appInstance: Application;
+  // sleep时 记录当前快照
+  snapshotMap = new Map();
   constructor(options: ScopeOptions) {
     super(options.shareScope);
     this.keepalive = !!options.keepalive;
@@ -37,8 +39,7 @@ export class Scope extends Sandbox implements ScopeInterface {
           resolve(info.result);
         });
       } else {
-        const task = fetchSource(info.url);
-        info.promise = task;
+        info.promise = this.appInstance.fetchSource(info.url);
       }
       this.scriptsMap.set(src, info);
 
@@ -63,8 +64,7 @@ export class Scope extends Sandbox implements ScopeInterface {
           resolve(info.result);
         });
       } else {
-        const task = fetchSource(info.url);
-        info.promise = task;
+        info.promise = this.appInstance.fetchSource(info.url);
       }
       this.stylesMap.set(src, info);
       this.styleTask.add(info);
@@ -153,7 +153,11 @@ export class Scope extends Sandbox implements ScopeInterface {
     this.resolvedMap.clear();
   }
   sleep() {
-    console.log('sleep');
+    // setInterval
+    // setTimeout
+    // addEventListener
+    // this.snapshotMap;
+    // console.log('sleep');
   }
 
   destory() {

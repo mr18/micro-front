@@ -55,6 +55,7 @@ declare module 'sandbox' {
     url: string;
     keepalive?: boolean;
     container: string | Element;
+    fetch?: (url: string, options?: object) => Promise<any>;
   } & ScopeOptions;
 
   type HtmlSourceType = {

@@ -1,4 +1,3 @@
-export * from './app/index';
-export * from './component/index';
-export * from './parser';
-export * from './sandbox/index';
+import { Application } from './app/index';
+export { CssParser, HtmlSourceParser } from './parser';
+export default Application;

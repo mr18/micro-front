@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable accessor-pairs */
 import { ScriptSourceType } from 'sandbox';
-import { Application } from 'src/app';
-import { Scope } from 'src/app/scope';
+import { Application } from '../app';
+import { Scope } from '../app/scope';
 
 const MicroScriptName = 'micro-script';
 export const defineSciprtElement = (scope: Scope, instance: Application) => {
@@ -11,9 +12,6 @@ export const defineSciprtElement = (scope: Scope, instance: Application) => {
     constructor() {
       super();
       Object.defineProperty(this, 'src', {
-        get() {
-          return '';
-        },
         set: (value: string) => {
           this.url = value;
           return true;

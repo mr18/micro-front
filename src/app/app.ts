@@ -4,8 +4,8 @@ import Logger from '../utils/logger';
 import { getContainerSelector, parseLocationUrl, resolvePath } from '../utils/path';
 import { defineFreezeProperty } from '../utils/utils';
 import { FrameWork } from './frame';
-import { rewriteCreateElement } from './inject';
-import { fetchSource } from './patch';
+import { injectRewrite } from './inject';
+import { defineFetch, fetchSourceByName, releaseFetch } from './schedule';
 import { Scope } from './scope';
 
 export const FrameName = '__MICRO_FRAME_WORK__';
@@ -58,7 +58,10 @@ export class Application {
     this.cssSelectorScope = `#${cssSelectorScope}`;
     this.scope = this.manager.provide(this, this.options);
     this.scope.appInstance = this;
-    rewriteCreateElement(this.scope, this);
+    if (this.options.fetch) {
+      defineFetch(this.name, this.options.fetch);
+    }
+    injectRewrite(this.scope, this);
 
     Logger.log('APP instance is initialized');
   }
@@ -66,7 +69,7 @@ export class Application {
   async run() {
     this.location = parseLocationUrl(this.options.url);
 
-    const html = (await fetchSource(this.location.href)) as string;
+    const html = (await this.fetchSource(this.location.href)) as string;
 
     const source: HtmlSourceType = pickSourceFromHtml(html, this.location);
 
@@ -87,7 +90,7 @@ export class Application {
       this.options.url = options.url;
       this.location = parseLocationUrl(this.options.url);
 
-      const html = (await fetchSource(this.location.href)) as string;
+      const html = (await this.fetchSource(this.location.href)) as string;
 
       const source: HtmlSourceType = pickSourceFromHtml(html, this.location);
 
@@ -103,12 +106,25 @@ export class Application {
       // document.dispatchEvent(new CustomEvent('DOMContentLoaded'));
     }
   }
-  inactive() {
-    // TODO:移除监听事件，释放内存空间
+  async fetchSource(url: string, options?: RequestInit) {
+    return fetchSourceByName(this.name, url, options);
   }
-  // keepalive===true
-  active() {
+  inactive() {
+    // keepalive===true
+    if (this.keepalive) {
+      // TODO:记录当前状态
+      this.scope.sleep();
+    } else {
+      // TODO:移除监听事件，释放内存空间
+      this.scope.destory();
+      releaseFetch(this.name);
+    }
+  }
+
+  active(options: AppOptions) {
     // TODO 重新绑定事件，复用资源
+    this.scope.weakup();
+    this.refresh(options);
   }
   addSourceTask(source: HtmlSourceType) {
     for (const [src, info] of source.sources) {
