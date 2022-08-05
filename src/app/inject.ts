@@ -1,5 +1,5 @@
-import { defineLinkElement, defineSciprtElement } from 'src/component';
-import { defineStyleElement } from 'src/component/style';
+import { defineLinkElement, defineSciprtElement } from '../component';
+import { defineStyleElement } from '../component/style';
 import { Application } from './app';
 import { Scope } from './scope';
 

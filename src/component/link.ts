@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { StyleSourceType } from 'sandbox';
-import { Application } from 'src/app';
-import { Scope } from 'src/app/scope';
+import { Application } from '../app';
+import { Scope } from '../app/scope';
 const MicroLinkName = 'micro-link';
 export const defineLinkElement = (scope: Scope, instance: Application) => {
   const win = scope.currentWindow;

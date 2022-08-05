@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { AppOptions } from 'sandbox';
-import { getContainerSelector } from 'src/utils/path';
+import { getContainerSelector } from '../utils/path';
 import { Application } from './app';
 
 const MicroContainerName = 'micro-container';

@@ -1,7 +1,7 @@
 import { ScopeInterface, ScopeOptions, ScriptSourceType, StyleSourceType } from 'sandbox';
-import { cssScope } from 'src/parser/css';
-import { Sandbox } from 'src/sandbox';
-import Logger from 'src/utils/logger';
+import { cssScope } from '../parser/css';
+import { Sandbox } from '../sandbox';
+import Logger from '../utils/logger';
 import { Application } from './app';
 import { fetchSource, scheduleAsyncAsParallel, scheduleAsyncAsSync, scheduleTask } from './patch';
 

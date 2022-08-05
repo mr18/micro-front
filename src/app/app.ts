@@ -1,8 +1,8 @@
 import { AppOptions, HtmlSourceType } from 'sandbox';
-import { pickSourceFromHtml } from 'src/parser/html';
-import Logger from 'src/utils/logger';
-import { getContainerSelector, parseLocationUrl, resolvePath } from 'src/utils/path';
-import { defineFreezeProperty } from 'src/utils/utils';
+import { pickSourceFromHtml } from '../parser/html';
+import Logger from '../utils/logger';
+import { getContainerSelector, parseLocationUrl, resolvePath } from '../utils/path';
+import { defineFreezeProperty } from '../utils/utils';
 import { FrameWork } from './frame';
 import { rewriteCreateElement } from './inject';
 import { fetchSource } from './patch';
