@@ -1,4 +1,4 @@
-import { ScopeInterface, ScopeOptions, ScriptSourceType, StyleSourceType } from 'sandbox';
+import { ScopeInterface, ScopeOptions, ScriptSourceType, StyleSourceType } from '@micro-front/types';
 import { cssScope } from '../parser/css';
 import { Sandbox } from '../sandbox';
 import Logger from '../utils/logger';

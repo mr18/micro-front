@@ -1,4 +1,4 @@
-import { AppOptions, HtmlSourceType } from 'sandbox';
+import { AppOptions, HtmlSourceType } from '@micro-front/types';
 import { pickSourceFromHtml } from '../parser/html';
 import Logger from '../utils/logger';
 import { getContainerSelector, parseLocationUrl, resolvePath } from '../utils/path';

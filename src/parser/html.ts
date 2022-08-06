@@ -1,4 +1,4 @@
-import { HtmlSourceType, ScriptSourceType, StyleSourceType } from 'sandbox';
+import { HtmlSourceType, ScriptSourceType, StyleSourceType } from '@micro-front/types';
 import { parseFileName, resolvePath } from 'src/utils/path';
 
 enum ActionType {

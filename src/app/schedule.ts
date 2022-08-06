@@ -1,4 +1,4 @@
-import { SourceType } from 'sandbox';
+import { SourceType } from '@micro-front/types';
 const fetchMap = new Map();
 export const defineFetch = (name: string, fetch) => {
   fetchMap.set(name, fetch);

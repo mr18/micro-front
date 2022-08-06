@@ -6,7 +6,7 @@
     "allowJs": true,
     "checkJs": true,
     "noEmit": true,
-    "declaration": false,
+    "declaration": true,
     "downlevelIteration": true,
     "skipLibCheck": true,
     "disableSizeLimit": true,

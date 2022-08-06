@@ -1,5 +1,5 @@
 {
-  "name": "micro-front",
+  "name": "@mr18/micro-front",
   "version": "0.1.1",
   "description": "micro-front",
   "main": "lib/index.min.js",
@@ -8,7 +8,7 @@
   "types": "lib/types/index.d.ts",
   "scripts": {
     "clean": "rimraf lib",
-    "build:types": "tsc -b ./tsconfig.types.json",
+    "build:types": "node ./scripts/build_types.js",
     "build:watch": "cross-env NODE_ENV='development' rollup -c -w",
     "build": "cross-env NODE_ENV='production' rollup -c && yarn build:types",
     "lint": "eslint --ext .ts,.js",

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable accessor-pairs */
-import { ScriptSourceType } from 'sandbox';
+import { ScriptSourceType } from '@micro-front/types';
 import { Application } from '../app';
 import { Scope } from '../app/scope';
 

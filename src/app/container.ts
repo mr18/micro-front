@@ -1,7 +1,7 @@
 /* eslint-disable accessor-pairs */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { AppOptions } from 'sandbox';
+import { AppOptions } from '@micro-front/types';
 import { getContainerSelector } from '../utils/path';
 import { Application } from './app';
 

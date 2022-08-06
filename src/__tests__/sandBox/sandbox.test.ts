@@ -2,7 +2,7 @@
  * @jest-environment-options {"href": "https://jestjs.io/"}
  */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { GlobalProxy } from 'sandbox';
+import { GlobalProxy } from '@micro-front/types';
 import { Sandbox } from '../../sandbox/sandbox';
 
 describe('sandbox property', () => {

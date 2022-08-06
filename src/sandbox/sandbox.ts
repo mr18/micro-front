@@ -1,4 +1,4 @@
-import { GlobalProxy, GlobalProxyType, SandboxInterface } from 'sandbox';
+import { GlobalProxy, GlobalProxyType, SandboxInterface } from '@micro-front/types';
 import { defineFreezeProperty, objectHasProperty } from '../../src/utils/utils';
 import proxyWin from './proxyWin';
 

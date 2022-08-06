@@ -1,4 +1,4 @@
-import { ManagerInterface, ScopeOptions } from 'sandbox';
+import { ManagerInterface, ScopeOptions } from '@micro-front/types';
 import { Application } from './app';
 import { Scope } from './scope';
 

@@ -1,4 +1,4 @@
-declare module 'sandbox' {
+declare module '@micro-front/types' {
   type GlobalProxyType = Window & {
     currentWindow: GlobalProxy;
     parentSandbox?: GlobalProxyType;
